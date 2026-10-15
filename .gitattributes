@@ -1,0 +1,11 @@
+# Keep the repo cross-platform: sources are LF, Windows-only scripts may be CRLF.
+* text=auto
+
+*.py   text eol=lf
+*.js   text eol=lf
+*.md   text eol=lf
+*.json text eol=lf
+*.ps1  text eol=crlf
+*.png  binary
+*.webp binary
+*.dmp  binary
