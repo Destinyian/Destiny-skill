@@ -222,3 +222,6 @@ context loss, responsive FOV), `frontend-motion-audit` (audit the deployed artif
 rewrite it). Note the deliberate difference in `dt` bounds: interaction snapping clamps to
 `0.001-0.05` because a loose bound lets a dropped glyph overshoot, while a scene-damping loop
 clamps to `0.15` because a tight bound makes a returned-from-background frame crawl.
+## Cluster router
+
+`frontend-rendering-triage` — when the symptom is real but the technique is not yet chosen.

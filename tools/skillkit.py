@@ -40,6 +40,8 @@ MAX_BODY_LINES = 500
 SOFT_BODY_LINES = 300
 MIN_TRIGGERS = 3
 JACCARD_WARN = 0.35
+MIN_HUB_CHILDREN = 2
+MAX_HUB_LINES = 60
 
 REQUIRED_ROOT_FILES = ["README.md", "CONVENTIONS.md", "EVOLUTION.md", "LICENSE", "skills.json", "tools/skillkit.py"]
 
@@ -326,6 +328,24 @@ def validate(skills: list[Skill], index: dict) -> list[tuple[str, str, str, str]
             err("E10", s.dir_name, f"maturity '{maturity}' requires an evidence entry or evidence_refs")
         if maturity == "routed" and not entry.get("referenced_by"):
             err("E10", s.dir_name, "maturity 'routed' requires referenced_by")
+        role = entry.get("role", "skill")
+        if role not in {"skill", "hub"}:
+            err("E16", s.dir_name, f"unknown role '{role}' (expected skill | hub)")
+        elif role == "hub":
+            children = [
+                o.name
+                for o in skills
+                if o.name != s.name
+                and (idx.get(o.name) or {}).get("cluster") == entry.get("cluster")
+                and o.name in (entry.get("related") or [])
+            ]
+            if len(children) < MIN_HUB_CHILDREN:
+                err("E16", s.dir_name, f"a hub must route >= {MIN_HUB_CHILDREN} skills of its own cluster; found {children}")
+            if s.body_lines > MAX_HUB_LINES:
+                err("E16", s.dir_name, f"hub body is {s.body_lines} lines > {MAX_HUB_LINES}: a router is a table, not a manual")
+            if s.scripts:
+                err("E16", s.dir_name, "a hub holds no scripts - the tool belongs to the child owning the technique")
+
         trigs = entry.get("triggers") or []
         if len(trigs) < MIN_TRIGGERS:
             warn("W05", s.dir_name, f"only {len(trigs)} triggers (want >= {MIN_TRIGGERS})")
@@ -388,6 +408,7 @@ def computed_entry(s: Skill, previous: dict | None) -> dict:
         "path": s.dir_name,
         "domain": prev.get("domain", "unclassified"),
         "cluster": prev.get("cluster", "unclassified"),
+        "role": prev.get("role", "skill"),
         "maturity": prev.get("maturity", "draft"),
         "verified_on": prev.get("verified_on"),
         "triggers": prev.get("triggers", []),
@@ -484,11 +505,16 @@ def report() -> int:
             )
         print()
 
-    print("cluster sizes:")
+    print("cluster sizes (routers excluded - the hub rule counts members, not the router):")
     for (domain, cluster), members in sorted(groups.items()):
-        flag = "  <-- consider a hub" if len(members) >= 3 else ""
-        flag = "  <-- SPLIT hub by sub-domain" if len(members) > 7 else flag
-        print(f"  {domain}/{cluster}: {len(members)}{flag}")
+        hubs = [m for m in members if (idx.get(m.name) or {}).get("role") == "hub"]
+        count = len(members) - len(hubs)
+        if hubs:
+            print(f"  {domain}/{cluster}: {count} member(s) + hub {', '.join(h.name for h in hubs)}")
+        elif count >= 3:
+            print(f"  {domain}/{cluster}: {count}  <-- consider a hub")
+        else:
+            print(f"  {domain}/{cluster}: {count}")
 
     print("\npossible overlaps (description token Jaccard >= %.2f):" % JACCARD_WARN)
     found = False

@@ -108,7 +108,9 @@ Verified: <the command / counter / experiment that proves it>
 * **scope = skill directory name**, or `repo` for cross-cutting changes.
 * **One commit touches one skill.** A new skill is a single `feat(<skill>)` that adds the directory,
   its `skills.json` entry and the README row together — never split across commits, never batched
-  with an unrelated skill.
+  with an unrelated skill. The one deliberate exception: **introducing a hub** is a single change
+  that necessarily edits the hub plus one cross-link line in each child, so it is one `feat(<hub>)`
+  commit even though several skills move.
 * `fix` and `feat` commits must carry a `Verified:` trailer naming the evidence.
   No evidence, no rewrite (see EVOLUTION.md).
 * Never commit a token, cookie or private key: `check` scans for seven common shapes (E08).
@@ -133,7 +135,9 @@ agent-ops   environment      dsh-sandbox-workarounds
 
 * **Cluster of 3–7 skills → add a hub skill** (a router): its body is a decision table plus links,
   under 60 lines, and its `description` is written to win when the user has not yet narrowed down
-  which technique applies. Children stay independently installable.
+  which technique applies. Children stay independently installable. Routers carry `role: hub` in
+  `skills.json`, which is what the cluster report counts members around — and what E16 enforces
+  (2+ children in its own cluster, body ≤60 lines, no scripts of its own).
 * **Cluster > 7, or hub body > 60 lines → split the hub** by sub-domain.
 * Cluster membership changes are one commit (`chore(repo): regroup ...`).
 
@@ -146,7 +150,7 @@ agent-ops   environment      dsh-sandbox-workarounds
 | `draft` | — | written, not yet verified against a real failure |
 | `verified` | `verified_on` | every claim has a counter, command or control experiment |
 | `field-tested` | ≥1 evidence entry | was used on a second, real problem after publication |
-| `routed` | `referenced_by` | a hub skill points at it |
+| `routed` | `referenced_by` | another skill links to it (usually a hub) — this is a *link state*, not a higher rung: a skill can be `verified` and still be routed |
 
 ## 9. Definition of done for a new skill
 

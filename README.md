@@ -32,6 +32,10 @@ cp -r <skill-name> ~/.claude/skills/     # or ~/.codex/skills/ or ~/.agents/skil
 
 ## The collection
 
+Routers: [frontend-rendering-triage](frontend-rendering-triage/) fronts the `frontend/rendering`
+cluster — load it when the symptom is clear but the technique is not ("it feels janky", "should
+this be canvas or DOM?"). It holds no patterns of its own; it chooses between three skills below.
+
 | Skill | Use it when | The non-obvious part |
 |---|---|---|
 | [chromium-crash-forensics](chromium-crash-forensics/) | the browser died, a tab shows "Aw, Snap!", "is it the browser or the extension?" | `0xE0000008` means renderer **out of memory** — cumulative over unattended hours, on a machine with 4.9 GB free; and userscripts run **inside** the page renderer, so page-vs-userscript needs an experiment, not a process listing |
@@ -58,6 +62,7 @@ Generated from `skills.json`. Do not edit by hand — run `python tools/skillkit
 | [tampermonkey-store-forensics](tampermonkey-store-forensics/) | browser / investigation | verified | 2026-10-15 | `scripts/extract_tampermonkey_store.py` | 0 |
 | [frontend-interaction-engineering](frontend-interaction-engineering/) | frontend / rendering | verified | 2026-10-15 | — | 0 |
 | [frontend-motion-audit](frontend-motion-audit/) | frontend / rendering | verified | 2026-10-15 | `scripts/audit_site_motion.py` | 0 |
+| [frontend-rendering-triage](frontend-rendering-triage/) | frontend / rendering | draft | — | — | 0 |
 | [immersive-webgl-scene-patterns](immersive-webgl-scene-patterns/) | frontend / rendering | verified | 2026-10-15 | — | 0 |
 
 <!-- SKILLS:END -->
