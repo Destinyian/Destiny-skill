@@ -51,14 +51,14 @@ Generated from `skills.json`. Do not edit by hand — run `python tools/skillkit
 
 | Skill | Domain / cluster | Maturity | Verified | Scripts | Evidence |
 |---|---|---|---|---|---|
-| [codex-relay-model-triage](codex-relay-model-triage/) | agent-ops / relay-config | verified | 2026-10-15 | `scripts/trace_model_resolution.py` | 0 |
-| [dsh-sandbox-workarounds](dsh-sandbox-workarounds/) | agent-ops / sandbox-env | field-tested | 2026-10-16 | — | 1 |
-| [chromium-crash-forensics](chromium-crash-forensics/) | browser / crash-forensics | verified | 2026-10-15 | `scripts/scan_crash_dumps.py` | 0 |
-| [tampermonkey-store-forensics](tampermonkey-store-forensics/) | browser / extension-forensics | verified | 2026-10-15 | `scripts/extract_tampermonkey_store.py` | 0 |
-| [headless-cdp-toolkit](headless-cdp-toolkit/) | browser / render-verify | verified | 2026-10-15 | `scripts/render-page.js` | 0 |
-| [frontend-motion-audit](frontend-motion-audit/) | frontend / artifact-audit | verified | 2026-10-15 | `scripts/audit_site_motion.py` | 0 |
-| [frontend-interaction-engineering](frontend-interaction-engineering/) | frontend / interaction-craft | verified | 2026-10-15 | — | 0 |
-| [immersive-webgl-scene-patterns](immersive-webgl-scene-patterns/) | frontend / scene-building | verified | 2026-10-15 | — | 0 |
+| [codex-relay-model-triage](codex-relay-model-triage/) | agent-ops / environment | verified | 2026-10-15 | `scripts/trace_model_resolution.py` | 0 |
+| [dsh-sandbox-workarounds](dsh-sandbox-workarounds/) | agent-ops / environment | field-tested | 2026-10-16 | — | 1 |
+| [chromium-crash-forensics](chromium-crash-forensics/) | browser / investigation | verified | 2026-10-15 | `scripts/scan_crash_dumps.py` | 0 |
+| [headless-cdp-toolkit](headless-cdp-toolkit/) | browser / investigation | verified | 2026-10-15 | `scripts/render-page.js` | 0 |
+| [tampermonkey-store-forensics](tampermonkey-store-forensics/) | browser / investigation | verified | 2026-10-15 | `scripts/extract_tampermonkey_store.py` | 0 |
+| [frontend-interaction-engineering](frontend-interaction-engineering/) | frontend / rendering | verified | 2026-10-15 | — | 0 |
+| [frontend-motion-audit](frontend-motion-audit/) | frontend / rendering | verified | 2026-10-15 | `scripts/audit_site_motion.py` | 0 |
+| [immersive-webgl-scene-patterns](immersive-webgl-scene-patterns/) | frontend / rendering | verified | 2026-10-15 | — | 0 |
 
 <!-- SKILLS:END -->
 

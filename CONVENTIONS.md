@@ -115,16 +115,20 @@ Verified: <the command / counter / experiment that proves it>
 
 ## 7. Taxonomy: domain / cluster / skill
 
+A **cluster is a routing unit**, not a topic label: it is the set of skills whose symptoms a single
+hub could disambiguate. Sized for that job — a cluster of one is a symptom that the taxonomy is
+over-split, a cluster of eight needs a split.
+
 ```
-domain      cluster                skill
-browser     crash-forensics        chromium-crash-forensics
-            extension-forensics    tampermonkey-store-forensics
-            render-verify          headless-cdp-toolkit
-frontend    artifact-audit         frontend-motion-audit
-            interaction-craft      frontend-interaction-engineering
-            scene-building         immersive-webgl-scene-patterns
-agent-ops   sandbox-env            dsh-sandbox-workarounds
-            relay-config           codex-relay-model-triage
+domain      cluster          skill
+browser     investigation    chromium-crash-forensics
+                             tampermonkey-store-forensics
+                             headless-cdp-toolkit
+frontend    rendering        frontend-motion-audit
+                             immersive-webgl-scene-patterns
+                             frontend-interaction-engineering
+agent-ops   environment      dsh-sandbox-workarounds
+                             codex-relay-model-triage
 ```
 
 * **Cluster of 3–7 skills → add a hub skill** (a router): its body is a decision table plus links,

@@ -7,7 +7,7 @@
       "name": "chromium-crash-forensics",
       "path": "chromium-crash-forensics",
       "domain": "browser",
-      "cluster": "crash-forensics",
+      "cluster": "investigation",
       "maturity": "verified",
       "verified_on": "2026-10-15",
       "triggers": [
@@ -38,7 +38,7 @@
       "name": "codex-relay-model-triage",
       "path": "codex-relay-model-triage",
       "domain": "agent-ops",
-      "cluster": "relay-config",
+      "cluster": "environment",
       "maturity": "verified",
       "verified_on": "2026-10-15",
       "triggers": [
@@ -67,7 +67,7 @@
       "name": "dsh-sandbox-workarounds",
       "path": "dsh-sandbox-workarounds",
       "domain": "agent-ops",
-      "cluster": "sandbox-env",
+      "cluster": "environment",
       "maturity": "field-tested",
       "verified_on": "2026-10-16",
       "triggers": [
@@ -96,7 +96,7 @@
       "name": "frontend-interaction-engineering",
       "path": "frontend-interaction-engineering",
       "domain": "frontend",
-      "cluster": "interaction-craft",
+      "cluster": "rendering",
       "maturity": "verified",
       "verified_on": "2026-10-15",
       "triggers": [
@@ -125,7 +125,7 @@
       "name": "frontend-motion-audit",
       "path": "frontend-motion-audit",
       "domain": "frontend",
-      "cluster": "artifact-audit",
+      "cluster": "rendering",
       "maturity": "verified",
       "verified_on": "2026-10-15",
       "triggers": [
@@ -155,7 +155,7 @@
       "name": "headless-cdp-toolkit",
       "path": "headless-cdp-toolkit",
       "domain": "browser",
-      "cluster": "render-verify",
+      "cluster": "investigation",
       "maturity": "verified",
       "verified_on": "2026-10-15",
       "triggers": [
@@ -185,7 +185,7 @@
       "name": "immersive-webgl-scene-patterns",
       "path": "immersive-webgl-scene-patterns",
       "domain": "frontend",
-      "cluster": "scene-building",
+      "cluster": "rendering",
       "maturity": "verified",
       "verified_on": "2026-10-15",
       "triggers": [
@@ -214,7 +214,7 @@
       "name": "tampermonkey-store-forensics",
       "path": "tampermonkey-store-forensics",
       "domain": "browser",
-      "cluster": "extension-forensics",
+      "cluster": "investigation",
       "maturity": "verified",
       "verified_on": "2026-10-15",
       "triggers": [
