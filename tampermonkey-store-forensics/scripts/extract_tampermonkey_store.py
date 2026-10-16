@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""tm_extract.py — pull userscripts and script settings out of a Tampermonkey store.
+"""extract_tampermonkey_store.py — pull userscripts and script settings out of a Tampermonkey store.
 
 Tampermonkey keeps everything in a LevelDB database under the browser profile's
 "Local Extension Settings/<extension id>". The values are JSON, often double
@@ -7,10 +7,10 @@ encoded, and the blocks are Snappy-compressed — so plain grep/strings will not
 reliably work. This reads the LevelDB table format + Snappy by hand (stdlib only).
 
 Usage:
-    python tm_extract.py --list                 # keys + sizes only
-    python tm_extract.py                        # extract scripts + storage
-    python tm_extract.py --store "<dir>" --out ./tm-out
-    python tm_extract.py --browser chrome --profile "Profile 1"
+    python extract_tampermonkey_store.py --list                 # keys + sizes only
+    python extract_tampermonkey_store.py                        # extract scripts + storage
+    python extract_tampermonkey_store.py --store "<dir>" --out ./tm-out
+    python extract_tampermonkey_store.py --browser chrome --profile "Profile 1"
 
 Known extension ids:
     Tampermonkey on Edge    iikmkjmpaadaobahmlepeloendndfphd

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * render.js — headless Chromium renderer + tiny CDP driver. Zero npm deps (Node 22+).
+ * render-page.js — headless Chromium renderer + tiny CDP driver. Zero npm deps (Node 22+).
  *
  * Why: `curl` only gets the SPA shell; `--dump-dom`/`--screenshot` cannot click or
  * wait for async work. This launches Chromium with a debug port, drives it over
@@ -8,7 +8,7 @@
  * text, and capture screenshots at several viewports.
  *
  * Usage:
- *   node render.js --url <url> [--click "#btn"] [--wait 5000] \
+ *   node render-page.js --url <url> [--click "#btn"] [--wait 5000] \
  *                  [--shot out.png] [--viewport 375x812 --viewport 1440x900] \
  *                  [--dom out.html] [--text out.txt] [--timeout 45] [--keep]
  *

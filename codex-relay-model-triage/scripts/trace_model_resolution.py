@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""model_trace.py — why does a relay say "Model X is not available for this group"?
+"""trace_model_resolution.py — why does a relay say "Model X is not available for this group"?
 
 The effective model of a Codex/Claude-Code style client can be pinned in several
 independent places, so "I changed the config and it still fails" is normal. This
@@ -13,9 +13,9 @@ tool shows every place at once, oldest-layer first:
   4. the provider's own model list (GET {base}/v1/models)  <- what your group may use
 
 Usage:
-    python model_trace.py                       # report only
-    python model_trace.py --verify              # also query the provider's model list
-    python model_trace.py --set-model <providerId>=<model>   # fix a provider's stored config
+    python trace_model_resolution.py                       # report only
+    python trace_model_resolution.py --verify              # also query the provider's model list
+    python trace_model_resolution.py --set-model <providerId>=<model>   # fix a provider's stored config
 
 Secrets are never printed.
 """

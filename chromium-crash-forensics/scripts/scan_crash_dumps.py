@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""crash_scan.py — why did Chromium crash? Classify Chromium/Electron crash dumps.
+"""scan_crash_dumps.py — why did Chromium crash? Classify Chromium/Electron crash dumps.
 
 Reads Crashpad minidumps, extracts the exception code, and reports whether it was
 a renderer OOM or something else. No third-party dependencies.
 
 Usage:
-    python crash_scan.py                      # auto-detect Edge + Chrome stores
-    python crash_scan.py --dir "<Crashpad dir>"
-    python crash_scan.py --json
+    python scan_crash_dumps.py                      # auto-detect Edge + Chrome stores
+    python scan_crash_dumps.py --dir "<Crashpad dir>"
+    python scan_crash_dumps.py --json
 """
 from __future__ import annotations
 
