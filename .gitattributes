@@ -10,3 +10,4 @@
 *.webp binary
 *.dmp  binary
 LICENSE text eol=lf
+.gitignore text eol=lf

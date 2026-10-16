@@ -157,3 +157,35 @@ agent-ops   environment      dsh-sandbox-workarounds
 5. `python tools/skillkit.py check` — zero errors.
 6. `python tools/skillkit.py cluster` — no new trigger collision, cluster size still sane.
 7. Commit as `feat(<skill>)`, with `Verified:` naming the session that proved it.
+
+## 10. What the checker enforces
+
+`python tools/skillkit.py check` — errors exit 1, warnings inform. Nothing here is a suggestion.
+
+| Code | Level | Rule |
+|---|---|---|
+| E00 | error | the required root files exist (README, CONVENTIONS, EVOLUTION, LICENSE, skills.json, tools/skillkit.py) |
+| E01–E02 | error | directory name is kebab-case, ≤64 chars, unique, and equals frontmatter `name` |
+| E03 | error | description present, opens with `Use when/before/after/while/if/during`, ≤500 chars; frontmatter ≤1024 |
+| E04 | error | body ≤500 lines |
+| E05 | error | nothing but SKILL.md / EVIDENCE.md / CHANGELOG.md / `scripts` / `references` / `examples` / `assets` at the skill root |
+| E06 | error | script names are `snake_case.py` or `kebab-case.js`, verb first |
+| E07 | error | every path named in **inline code** exists (a hit in a sibling skill is W07 instead) |
+| E08 | error | no token / key / password patterns |
+| E09 | error | every skill is in `skills.json`, and every entry has a directory |
+| E10 | error | the maturity rung is earned (`verified_on`, evidence, `referenced_by`) |
+| E11 / E14 / E15 | error | `related` skills exist, are mentioned in the body, and `referenced_by` is their exact inverse |
+| E12 | error | no trigger phrase is claimed by two skills |
+| E13 | error | a script must not tell the reader to run a file that exists nowhere — `python old_name.py` after a rename is the canonical case |
+| W01–W07 | warn | CJK in a body, description token overlap, body near 500 lines, fewer than 3 triggers, first-person description, cross-skill file reference, no evidence at all |
+
+`referenced_by` is **generated** (the inverse of `related`); `index --write` maintains it, so never
+hand-edit it.
+
+**Body-level overlap is reported, not enforced.** Measured 2026-10-16 across this library, the
+highest identifier overlap between any two skills is 0.128 — the pairs everyone would name as
+related sit at 0.10–0.13 and unrelated ones at 0.05–0.08, so the metric cannot separate "these
+overlap" from "these are in the same domain". Gating on it would only train people to ignore the
+checker; `cluster` prints the top five against the baseline for human review instead. When two
+skills genuinely conflict — same concept, different constant — that is a job for the evolution
+loop, not for a threshold.

@@ -61,6 +61,28 @@ FENCED_BLOCK_RE = re.compile(r"^```.*?^```", re.M | re.S)
 CJK_RE = re.compile(r"[\u3000-\u303f\u3400-\u4dbf\u4e00-\u9fff\uff00-\uffef]")
 DESCRIPTION_OPENING_RE = re.compile(r"^use (?:when|before|after|while|if|during)\b")
 
+# A script's own usage text is where the "renamed but not everywhere" class of bug lives, so the
+# header (module docstring) and every `python x.py` / `node x.js` invocation are checked.
+SCRIPT_TOKEN_RE = re.compile(r"(?<![\w./\\-])([A-Za-z0-9_\-]+\.(?:py|js))")
+USAGE_HINT_RE = re.compile(r"\b(?:python3?|py|node)\s+[\"']?([A-Za-z0-9_\-]+\.(?:py|js))")
+TITLE_TOKEN_RE = re.compile(r'^\s*(?:"""|\'\'\'|#|\*|//)?\s*([A-Za-z0-9_\-]+\.(?:py|js))\b')
+HEADER_LINES = 3
+BODY_IDENT_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]{5,}")
+BODY_STOPWORDS = set(
+    """should because before between through without anything something everything problem problems
+    instead number numbers change changes example examples output outputs result results return
+    returns string strings value values field fields method methods function functions python script
+    scripts window browser renderer renderers element elements container document default channel
+    request response server client config configuration message messages object objects option
+    options struct class types check checks using used useful render rendering canvas context
+    buffer uniforms shader shaders vertex fragment texture textures camera scene scenes particle
+    particles physics frame frames pointer gesture gestures user users click clicks drag dragging
+    state states event events handler handlers target targets source sources store stores level
+    table tables record records profile profiles file files path paths time times line lines begin
+    handle private public static const let var async await actual actually""".split()
+)
+BODY_OVERLAP_BASELINE = 0.13
+
 STOPWORDS = {
     "the", "and", "for", "with", "that", "this", "when", "use", "used", "you", "your", "its", "it's",
     "are", "was", "were", "has", "have", "had", "not", "but", "from", "into", "than", "then", "them",
@@ -158,6 +180,30 @@ def resolve_reference(ref: str, skill: "Skill", skills: list["Skill"]) -> str | 
     return None
 
 
+def script_name_problems(path: Path, all_script_names: set[str]) -> list[str]:
+    """Scripts that tell the reader to run a file that does not exist anywhere in the library.
+
+    Only two positions count, because both are instructions to the reader:
+      * an invocation: python foo.py, node foo.js (anywhere in the file)
+      * the title line of the module docstring / header (a bare foo.py at the start of one of the
+        first 3 lines)
+
+    Prose mentions of third-party libraries (`three.js`, `anime.js`) are not invocations and are
+    deliberately ignored: a rule that flags them trains the reader to ignore the checker.
+    """
+    text = path.read_text(encoding="utf-8", errors="replace")
+    title_lines = "\n".join(text.splitlines()[:HEADER_LINES])
+    suspects = set(USAGE_HINT_RE.findall(text)) | {
+        m.group(1) for m in (TITLE_TOKEN_RE.match(line) for line in title_lines.splitlines()) if m
+    }
+    return sorted(s for s in suspects if s != path.name and s not in all_script_names)
+
+
+def body_identifiers(skill: "Skill") -> set[str]:
+    body = skill.raw.split("---", 2)[-1]
+    return {t.lower() for t in BODY_IDENT_RE.findall(body) if t.lower() not in BODY_STOPWORDS}
+
+
 def discover_skills() -> list[Skill]:
     out = []
     for child in sorted(ROOT.iterdir()):
@@ -196,6 +242,7 @@ def validate(skills: list[Skill], index: dict) -> list[tuple[str, str, str, str]
 
     idx = index_by_name(index)
     seen_names: dict[str, str] = {}
+    all_script_names = {p.name for sk in skills for p in (sk.path / "scripts").glob("*") if p.is_file()}
 
     for s in skills:
         # E01 naming
@@ -246,6 +293,11 @@ def validate(skills: list[Skill], index: dict) -> list[tuple[str, str, str, str]
             elif where != "local":
                 warn("W07", s.dir_name, f"references another skill's file: {ref} (in {where})")
 
+        # E13 a script must not tell the reader to run a file that does not exist
+        for sc in s.scripts:
+            for bad in script_name_problems(s.path / "scripts" / sc, all_script_names):
+                err("E13", s.dir_name, f"scripts/{sc} names '{bad}', which exists nowhere in the library")
+
         # E08 secrets
         for pat in SECRET_PATTERNS:
             if re.search(pat, s.raw):
@@ -280,10 +332,22 @@ def validate(skills: list[Skill], index: dict) -> list[tuple[str, str, str, str]
         for extra in entry.get("related", []):
             if extra not in {x.dir_name for x in skills}:
                 err("E11", s.dir_name, f"related skill '{extra}' does not exist")
+            elif extra not in s.raw:
+                err("E14", s.dir_name, f"related lists '{extra}' but SKILL.md never mentions it")
+        for other in sorted(x.dir_name for x in skills):
+            if other != s.name and other in s.raw and other not in (entry.get("related") or []):
+                err("E14", s.dir_name, f"SKILL.md mentions '{other}' but related does not list it")
 
     for name in idx:
         if name not in seen_names:
             err("E09", str(name), "skills.json has an entry with no directory on disk")
+
+    # E15 referenced_by is generated: it must be the exact inverse of related
+    for s in skills:
+        expected = sorted(o.name for o in skills if s.name in ((idx.get(o.name) or {}).get("related") or []))
+        actual = sorted((idx.get(s.name) or {}).get("referenced_by") or [])
+        if expected != actual:
+            err("E15", s.dir_name, f"referenced_by should be {expected} (generated); stored {actual}")
 
     # E12 duplicate triggers across skills
     trigger_owner: dict[str, list[str]] = {}
@@ -343,6 +407,9 @@ def sync_index(write: bool, update_readme: bool) -> int:
     index = load_index()
     prev = index_by_name(index)
     entries = [computed_entry(s, prev.get(s.name)) for s in skills]
+    # referenced_by is derived, never authored: it is the inverse of related
+    for e in entries:
+        e["referenced_by"] = sorted(o["name"] for o in entries if e["name"] in (o.get("related") or []))
     drift = []
     for e in entries:
         old = prev.get(e["name"])
@@ -434,16 +501,35 @@ def report() -> int:
     if not found:
         print("  none")
 
+    print(f"\nbody overlap, top 5 (review prompt, NOT a gate; measured baseline max {BODY_OVERLAP_BASELINE}):")
+    idents = {s.name: body_identifiers(s) for s in skills}
+    ranked = sorted(
+        (
+            (jaccard(idents[a.name], idents[b.name]), a.name, b.name)
+            for i, a in enumerate(skills)
+            for b in skills[i + 1:]
+        ),
+        reverse=True,
+    )[:5]
+    for j, a, b in ranked:
+        print(f"  {j:.3f}  {a} ~ {b}{'   <-- review' if j >= BODY_OVERLAP_BASELINE else ''}")
+
     print("\nmaintenance:")
     for s in skills:
+        entry = idx.get(s.name) or {}
         notes = []
         if s.body_lines > SOFT_BODY_LINES:
             notes.append(f"body {s.body_lines} lines")
-        if s.evidence_count == 0:
+        if s.evidence_count == 0 and not entry.get("evidence_refs"):
             notes.append("no evidence")
         if not notes:
             continue
         print(f"  {s.name:<38} {', '.join(notes)}")
+    if not any(
+        s.body_lines > SOFT_BODY_LINES or (s.evidence_count == 0 and not (idx.get(s.name) or {}).get("evidence_refs"))
+        for s in skills
+    ):
+        print("  nothing to do")
     return 0
 
 
