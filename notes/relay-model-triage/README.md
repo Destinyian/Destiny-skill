@@ -77,4 +77,4 @@ Secrets are never printed — the tool reports only whether a key is present.
 
 ## Related skills
 
-`dsh-sandbox-workarounds` (when the shell cannot do TLS and you must probe with Node).
+`windows-agent-sandbox-failures` (when the shell cannot do TLS and you must probe with Node).

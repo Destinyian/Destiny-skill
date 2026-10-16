@@ -226,7 +226,7 @@ overrides) is pure CSS:
 ## Verification recipes (no GUI needed)
 
 1. **Multi-viewport proof** — headless render at 375×812, 768×1024, 1440×900 and compare
-   framing. See the `headless-cdp-toolkit` skill (`scripts/render-page.js --viewport …`).
+   framing. See the `headless-cdp-toolkit` skill (its render script takes repeatable `--viewport` flags).
 2. **Force the fallback** — clear the flag that means "no WebGL" by launching with
    `--disable-gpu --disable-software-rasterizer`, or stub `HTMLCanvasElement.prototype.getContext`
    via CDP `Page.addScriptToEvaluateOnNewDocument`, then confirm the static image path looks right.
@@ -235,7 +235,7 @@ overrides) is pure CSS:
    *and* the frame cost drops.
 4. **Kill the network** — CDP `Network.emulateNetworkConditions` offline *after* load; the
    lazy chunk must fail into `fallback`, not a blank screen.
-5. **Audit the shipped artifacts** offline with the `frontend-motion-audit` skill before
+5. **Audit the shipped artifacts** offline with the `extracting-interaction-techniques` skill before
    trusting any claim about what the page uses.
 
 ## Provenance
@@ -247,7 +247,7 @@ treat them as sane starting points, not laws.
 
 ## Related skills
 
-`frontend-motion-audit` (the same techniques from the audit side: what the lazy chunk contains,
+`extracting-interaction-techniques` (the same techniques from the audit side: what the lazy chunk contains,
 which production concerns are missing), `frontend-interaction-engineering` (gesture
 disambiguation, click-vs-drag thresholds, counters for feel), `headless-cdp-toolkit` (verify the
 fallback and the state machine without a GUI).

@@ -1,4 +1,4 @@
-# Evidence — dsh-sandbox-workarounds
+# Evidence — windows-agent-sandbox-failures
 
 Append-only log. One entry per real session that used this skill — or should have used it and did
 not. Format and rules: [EVOLUTION.md](../EVOLUTION.md).

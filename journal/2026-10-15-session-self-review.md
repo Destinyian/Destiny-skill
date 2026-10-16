@@ -37,7 +37,7 @@
 
 `chromium-crash-forensics`、`tampermonkey-store-forensics`、`headless-cdp-toolkit`、
 `frontend-motion-audit`、`immersive-webgl-scene-patterns`、`codex-relay-model-triage`、
-`dsh-sandbox-workarounds`、**`frontend-interaction-engineering`（新）**
+`windows-agent-sandbox-failures`、**`frontend-interaction-engineering`（新）**
 
 ---
 

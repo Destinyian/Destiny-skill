@@ -9,6 +9,12 @@
       "domain": "browser",
       "cluster": "investigation",
       "role": "skill",
+      "platform": [
+        "windows"
+      ],
+      "requires": [
+        "python>=3.10"
+      ],
       "maturity": "verified",
       "verified_on": "2026-10-15",
       "triggers": [
@@ -21,12 +27,11 @@
         "is it the browser or the extension"
       ],
       "related": [
-        "frontend-motion-audit",
+        "extracting-interaction-techniques",
         "headless-cdp-toolkit",
         "tampermonkey-store-forensics"
       ],
       "referenced_by": [
-        "frontend-motion-audit",
         "headless-cdp-toolkit",
         "tampermonkey-store-forensics"
       ],
@@ -41,32 +46,47 @@
       "evidence_count": 0
     },
     {
-      "name": "dsh-sandbox-workarounds",
-      "path": "dsh-sandbox-workarounds",
-      "domain": "agent-ops",
-      "cluster": "environment",
+      "name": "extracting-interaction-techniques",
+      "path": "extracting-interaction-techniques",
+      "domain": "frontend",
+      "cluster": "rendering",
       "role": "skill",
-      "maturity": "field-tested",
-      "verified_on": "2026-10-16",
+      "platform": [
+        "any"
+      ],
+      "requires": [
+        "python>=3.10"
+      ],
+      "maturity": "verified",
+      "verified_on": "2026-10-15",
       "triggers": [
-        "SEC_E_NO_CREDENTIALS",
-        "CIM access denied",
-        "EPERM piped stdio",
-        "UnicodeEncodeError gbk",
-        "spawn ENOENT",
-        "command moved to the background",
-        "SSL connection could not be established"
+        "is this WebGL or an image",
+        "what library is this",
+        "why is this page heavy",
+        "what interaction techniques does this site use",
+        "audit downloaded artifacts",
+        "lazy chunk scan"
       ],
       "related": [
-        "headless-cdp-toolkit"
+        "frontend-interaction-engineering",
+        "headless-cdp-toolkit",
+        "immersive-webgl-scene-patterns",
+        "tampermonkey-store-forensics"
       ],
-      "referenced_by": [],
+      "referenced_by": [
+        "chromium-crash-forensics",
+        "frontend-interaction-engineering",
+        "headless-cdp-toolkit",
+        "immersive-webgl-scene-patterns"
+      ],
       "evidence_refs": [
-        "dsh-sandbox-workarounds/EVIDENCE.md"
+        "journal/2026-10-15-session-self-review.md"
       ],
-      "description": "Use when commands fail for environment reasons rather than logic reasons inside a confined agent sandbox — schannel SEC_E_NO_CREDENTIALS or \"The SSL connection could not be established\", CIM/WMI access denied, EPERM when spawning a child with piped stdio, UnicodeEncodeError from a GBK console, a long command that gets backgrounded, or `spawn ENOENT` for an executable that demonstrably exists (a missing working directory, or a Microsoft Store app execution alias).",
-      "body_lines": 44,
-      "scripts": [],
+      "description": "Use when you are handed a front-end page — a URL, a downloaded bundle, a screenshot, or \"make ours feel like this one\" — and need the interaction techniques behind it rather than a description. Produces a technique inventory (rendering path, gesture model, physics constants, state machine, timing, accessibility twins, cost) where every entry carries its evidence, its parameters and a code skeleton; pairs with headless-cdp-toolkit and frontend-interaction-engineering.",
+      "body_lines": 113,
+      "scripts": [
+        "scripts/audit_page_signals.py"
+      ],
       "evidence_count": 1
     },
     {
@@ -75,6 +95,10 @@
       "domain": "frontend",
       "cluster": "rendering",
       "role": "skill",
+      "platform": [
+        "any"
+      ],
+      "requires": [],
       "maturity": "verified",
       "verified_on": "2026-10-15",
       "triggers": [
@@ -87,11 +111,13 @@
         "canvas interaction"
       ],
       "related": [
-        "frontend-motion-audit",
+        "extracting-interaction-techniques",
         "immersive-webgl-scene-patterns"
       ],
       "referenced_by": [
-        "immersive-webgl-scene-patterns"
+        "extracting-interaction-techniques",
+        "immersive-webgl-scene-patterns",
+        "precompute-the-rest-state"
       ],
       "evidence_refs": [
         "journal/2026-10-15-session-self-review.md"
@@ -102,48 +128,19 @@
       "evidence_count": 0
     },
     {
-      "name": "frontend-motion-audit",
-      "path": "frontend-motion-audit",
-      "domain": "frontend",
-      "cluster": "rendering",
-      "role": "skill",
-      "maturity": "verified",
-      "verified_on": "2026-10-15",
-      "triggers": [
-        "is this WebGL or an image",
-        "what library is this",
-        "why is this page heavy",
-        "what interaction techniques does this site use",
-        "audit downloaded artifacts",
-        "lazy chunk scan"
-      ],
-      "related": [
-        "chromium-crash-forensics",
-        "headless-cdp-toolkit",
-        "immersive-webgl-scene-patterns"
-      ],
-      "referenced_by": [
-        "chromium-crash-forensics",
-        "frontend-interaction-engineering",
-        "headless-cdp-toolkit",
-        "immersive-webgl-scene-patterns"
-      ],
-      "evidence_refs": [
-        "journal/2026-10-15-session-self-review.md"
-      ],
-      "description": "Use before rewriting, optimizing or judging a deployed front-end — \"is this WebGL or just an image?\", \"what library is this?\", \"why is this page heavy?\", \"what interaction techniques does this site use?\". Audits already-downloaded artifacts offline: framework/library detection, real-time rendering vs static art, motion techniques, design tokens, responsive strategy, lazy chunks, and missing production concerns (reduced motion, CLS, social card).",
-      "body_lines": 63,
-      "scripts": [
-        "scripts/audit_site_motion.py"
-      ],
-      "evidence_count": 0
-    },
-    {
       "name": "headless-cdp-toolkit",
       "path": "headless-cdp-toolkit",
       "domain": "browser",
       "cluster": "investigation",
       "role": "skill",
+      "platform": [
+        "windows",
+        "macos",
+        "linux"
+      ],
+      "requires": [
+        "node>=22"
+      ],
       "maturity": "verified",
       "verified_on": "2026-10-15",
       "triggers": [
@@ -156,14 +153,14 @@
       ],
       "related": [
         "chromium-crash-forensics",
-        "frontend-motion-audit"
+        "extracting-interaction-techniques"
       ],
       "referenced_by": [
         "chromium-crash-forensics",
-        "dsh-sandbox-workarounds",
-        "frontend-motion-audit",
+        "extracting-interaction-techniques",
         "immersive-webgl-scene-patterns",
-        "tampermonkey-store-forensics"
+        "tampermonkey-store-forensics",
+        "windows-agent-sandbox-failures"
       ],
       "evidence_refs": [
         "journal/2026-10-15-session-self-review.md"
@@ -181,6 +178,10 @@
       "domain": "frontend",
       "cluster": "rendering",
       "role": "skill",
+      "platform": [
+        "any"
+      ],
+      "requires": [],
       "maturity": "verified",
       "verified_on": "2026-10-15",
       "triggers": [
@@ -194,12 +195,13 @@
       ],
       "related": [
         "frontend-interaction-engineering",
-        "frontend-motion-audit",
+        "extracting-interaction-techniques",
         "headless-cdp-toolkit"
       ],
       "referenced_by": [
+        "extracting-interaction-techniques",
         "frontend-interaction-engineering",
-        "frontend-motion-audit"
+        "precompute-the-rest-state"
       ],
       "evidence_refs": [
         "journal/2026-10-15-session-self-review.md"
@@ -210,11 +212,53 @@
       "evidence_count": 0
     },
     {
+      "name": "precompute-the-rest-state",
+      "path": "precompute-the-rest-state",
+      "domain": "frontend",
+      "cluster": "rendering",
+      "role": "skill",
+      "platform": [
+        "any"
+      ],
+      "requires": [],
+      "maturity": "verified",
+      "verified_on": "2026-10-15",
+      "triggers": [
+        "it never settles",
+        "jitters forever",
+        "particles shuffle after landing",
+        "restore bounces",
+        "physics toy never comes to rest",
+        "stuck in collapsing"
+      ],
+      "related": [
+        "frontend-interaction-engineering",
+        "immersive-webgl-scene-patterns"
+      ],
+      "referenced_by": [],
+      "evidence_refs": [
+        "journal/2026-10-15-session-self-review.md",
+        "precompute-the-rest-state/EVIDENCE.md"
+      ],
+      "description": "Use when a system has to end in a canonical configuration after the user damages it — physics piles, layout animations, undo/restore, drag toys — and instead it \"never settles\", \"jitters forever\", \"particles shuffle after landing\", \"the restore bounces\", or a state machine is stuck in `collapsing`. The idea: compute the end state and animate toward it; never simulate your way into it.",
+      "body_lines": 83,
+      "scripts": [],
+      "evidence_count": 1
+    },
+    {
       "name": "tampermonkey-store-forensics",
       "path": "tampermonkey-store-forensics",
       "domain": "browser",
       "cluster": "investigation",
       "role": "skill",
+      "platform": [
+        "windows",
+        "macos",
+        "linux"
+      ],
+      "requires": [
+        "python>=3.10"
+      ],
       "maturity": "verified",
       "verified_on": "2026-10-15",
       "triggers": [
@@ -230,7 +274,8 @@
         "headless-cdp-toolkit"
       ],
       "referenced_by": [
-        "chromium-crash-forensics"
+        "chromium-crash-forensics",
+        "extracting-interaction-techniques"
       ],
       "evidence_refs": [
         "journal/2026-10-15-session-self-review.md"
@@ -241,6 +286,39 @@
         "scripts/extract_tampermonkey_store.py"
       ],
       "evidence_count": 0
+    },
+    {
+      "name": "windows-agent-sandbox-failures",
+      "path": "windows-agent-sandbox-failures",
+      "domain": "agent-ops",
+      "cluster": "environment",
+      "role": "skill",
+      "platform": [
+        "windows"
+      ],
+      "requires": [],
+      "maturity": "field-tested",
+      "verified_on": "2026-10-16",
+      "triggers": [
+        "SEC_E_NO_CREDENTIALS",
+        "CIM access denied",
+        "EPERM piped stdio",
+        "UnicodeEncodeError gbk",
+        "spawn ENOENT",
+        "command moved to the background",
+        "SSL connection could not be established"
+      ],
+      "related": [
+        "headless-cdp-toolkit"
+      ],
+      "referenced_by": [],
+      "evidence_refs": [
+        "windows-agent-sandbox-failures/EVIDENCE.md"
+      ],
+      "description": "Use when commands fail for environment reasons rather than logic reasons inside a confined agent sandbox — schannel SEC_E_NO_CREDENTIALS or \"The SSL connection could not be established\", CIM/WMI access denied, EPERM when spawning a child with piped stdio, UnicodeEncodeError from a GBK console, a long command that gets backgrounded, or `spawn ENOENT` for an executable that demonstrably exists (a missing working directory, or a Microsoft Store app execution alias).",
+      "body_lines": 44,
+      "scripts": [],
+      "evidence_count": 1
     }
   ]
 }

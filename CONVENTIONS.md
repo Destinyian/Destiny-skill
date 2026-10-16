@@ -62,7 +62,7 @@ description: Use when ... # <= 500 chars, third person, triggering conditions ON
 ```
 
 * `description` **must open with** `Use when` — or `Use before` / `Use after` / `Use while` when the
-  trigger is temporal (`frontend-motion-audit` opens with "Use before rewriting…"). It describes
+  trigger is temporal (`extracting-interaction-techniques` opens with "Use before rewriting…"). It describes
   **when to load the skill**, never how it works. A description that summarises the workflow becomes
   a shortcut the agent follows instead of reading the body.
 * Keywords first: exact error strings (`0xE0000008`, `SEC_E_NO_CREDENTIALS`), symptoms
@@ -126,10 +126,10 @@ domain      cluster          skill
 browser     investigation    chromium-crash-forensics
                              tampermonkey-store-forensics
                              headless-cdp-toolkit
-frontend    rendering        frontend-motion-audit
+frontend    rendering        extracting-interaction-techniques
                              immersive-webgl-scene-patterns
                              frontend-interaction-engineering
-agent-ops   environment      dsh-sandbox-workarounds
+agent-ops   environment      windows-agent-sandbox-failures
                              codex-relay-model-triage
 ```
 
@@ -194,37 +194,79 @@ checker; `cluster` prints the top five against the baseline for human review ins
 skills genuinely conflict — same concept, different constant — that is a job for the evolution
 loop, not for a threshold.
 
-## 11. What earns a skill (and what gets demoted)
+## 11. What a skill is, and what earns a place
 
-A skill costs context in **every** session that could load it, so a directory has to earn its place.
-The test, applied in order:
+**The mission of this library is to carry one project's experience into the next project as an idea.**
+A skill is **one idea**, written down so that it can be recalled and applied.
 
-1. **Will the symptom come back?** A one-off incident is a journal entry, not a skill.
-2. **Does it carry an instrument or a criterion?** A reusable script that produces evidence, a
-   decision table for a recurring symptom, or the *only* viable method for a problem. Narrative
-   alone does not qualify.
+Required fields of an idea card — a skill that is missing any of them is not finished:
+
+| Field | Answers |
+|---|---|
+| **the claim** | one sentence, stated as an assertion someone could disagree with |
+| **provenance** | which project or session produced it, and what broke there |
+| **recall triggers** | the symptoms that should bring it back — the `description` field |
+| **how to apply** | the rules that implement it when writing code, with constants |
+| **boundaries** | where it stops being true, and what to do instead there |
+| **evidence** | the measurements, with the environment that produced them |
+| **verify** | the command that passes on the good path **and fails on the bad one** |
+
+An idea may be an extraction procedure, an instrument, or an authoring rule — those are the *kinds*
+of idea, not the definition. A skill that carries no idea (a narrative, a topic summary, a topic
+list) is a journal entry, not a skill, however true it is.
+
+**A skill is a procedure over an artifact**: it names what it consumes, the checklist that turns that
+into findings, and the output a reader can act on. Narrative alone is a journal entry; a topic
+description alone is a reference page.
+
+| Kind | Consumes | Produces | In this library |
+|---|---|---|---|
+| **Extraction** | a page, a bundle, a browser store, a sample | findings that carry evidence, parameters and a code skeleton | `extracting-interaction-techniques`, `tampermonkey-store-forensics` |
+| **Instrument** | a URL or a live process | observations the other kinds consume | `headless-cdp-toolkit` |
+| **Authoring** | a design intent | code with measured defaults and their counter-examples | `frontend-interaction-engineering`, `immersive-webgl-scene-patterns` |
+
+**Extraction skills are graded on their output, not on their knowledge.** Every entry carries
+evidence (a file:line or an observed event), parameters tagged `measured | estimated`, and a
+confidence of `measured | inferred | unknown`. An extraction that ends in prose has failed even when
+the analysis is correct: nobody can write code from it.
+
+An **instrument** is judged by whether its output is reproducible on the reader's machine — that is
+why zero dependencies is a hard rule.
+
+A skill that is neither extraction, instrument nor authoring is a **diagnostic** (it explains a
+failure rather than producing something to build). Diagnostics are still allowed to live in this
+repository, but they live in `notes/`, not in the catalogue: they cost context in every session
+while producing nothing anyone writes code from.
+
+### What earns a directory (the pruning test)
+
+A skill costs context in **every** session that could load it. Applied in order:
+
+1. **Does the artifact come back?** A one-off incident is a journal entry, not a skill.
+2. **Does it produce something actionable?** A checklist that yields findings, an instrument that
+   yields observations, or measured defaults a coder can paste. Narrative does not qualify.
 3. **Does it transfer?** Count machine anchors — absolute paths, one vendor's database schema, one
    site's constants. Two or fewer anchors alongside several measured numbers is a skill; a dozen
    anchors with no numbers is a note.
-4. **Is the structure verified?** A hub whose routing scenario has never actually been observed is
-   speculation. Delete it and rebuild it with `skillkit.py new` when the scenario appears.
+4. **Is the structure verified?** A hub whose routing scenario has never been observed is
+   speculation. Delete it, rebuild it with `skillkit.py new` once the scenario appears.
 
 **Demotion beats deletion.** Move the directory to `notes/<topic>/`, rename `SKILL.md` to
 `README.md`, strip the frontmatter, drop it from every `related` list, and link it from the README.
-The knowledge survives, the context cost goes to zero, and `index --write` removes it from the
-catalogue. Deleting is for structure that was never true; demoting is for knowledge that is true but
-local.
+The knowledge and the scripts survive, the context cost goes to zero, and `index --write` removes it
+from the catalogue. Deleting is for structure that was never true; demoting is for knowledge that is
+true but out of mission.
 
-First application, 2026-10-16 — measured hard numbers / machine anchors per skill:
+Re-scored under this rule on 2026-10-16 (hard numbers / machine anchors as the transfer proxy):
 
-| Skill | Numbers | Anchors | Outcome |
-|---|---|---|---|
-| frontend-interaction-engineering | 14 | 0 | keep |
-| immersive-webgl-scene-patterns | 14 | 2 | keep |
-| chromium-crash-forensics | 2 | 3 | keep (ships an instrument) |
-| frontend-motion-audit | 2 | 0 | keep (ships an instrument) |
-| headless-cdp-toolkit | 1 | 1 | keep (ships an instrument) |
-| tampermonkey-store-forensics | 0 | 1 | keep (only viable method) |
-| dsh-sandbox-workarounds | 0 | 1 | keep (highest recurrence here) |
-| codex-relay-model-triage | 0 | 13 | **demoted to `notes/`** |
-| frontend-rendering-triage | — | — | **deleted** (unverified routing assumption) |
+| Skill | Kind | Outcome |
+|---|---|---|
+| extracting-interaction-techniques | extraction (flagship) | keep |
+| tampermonkey-store-forensics | extraction (recovers source code) | keep |
+| headless-cdp-toolkit | instrument | keep |
+| frontend-interaction-engineering | authoring | keep |
+| immersive-webgl-scene-patterns | authoring | keep |
+| chromium-crash-forensics | diagnostic | pending decision — demote to `notes/` or keep |
+| windows-agent-sandbox-failures | diagnostic | pending decision — demote to `notes/` or keep |
+| codex-relay-model-triage | diagnostic, 13 anchors | demoted to `notes/` |
+| frontend-rendering-triage | unverified structure | deleted |

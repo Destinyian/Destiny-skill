@@ -26,7 +26,7 @@
 | frontend-motion-audit | 2 | 0 | 留（带仪器） |
 | headless-cdp-toolkit | 1 | 1 | 留（带仪器） |
 | tampermonkey-store-forensics | 0 | 1 | 留（唯一可行方法） |
-| dsh-sandbox-workarounds | 0 | 1 | 留（本机复发率最高） |
+| windows-agent-sandbox-failures | 0 | 1 | 留（本机复发率最高） |
 | **codex-relay-model-triage** | **0** | **13** | **降级为笔记** |
 | **frontend-rendering-triage** | — | — | **删除** |
 

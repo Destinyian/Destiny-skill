@@ -218,7 +218,7 @@ headless Chromium on one machine: treat the **ratios** as the durable result.
 ## Related skills
 
 `immersive-webgl-scene-patterns` (the shell around a WebGL hero: loading/fallback state machine,
-context loss, responsive FOV), `frontend-motion-audit` (audit the deployed artifact before you
+context loss, responsive FOV), `extracting-interaction-techniques` (audit the deployed artifact before you
 rewrite it). Note the deliberate difference in `dt` bounds: interaction snapping clamps to
 `0.001-0.05` because a loose bound lets a dropped glyph overshoot, while a scene-damping loop
 clamps to `0.15` because a tight bound makes a returned-from-background frame crawl.

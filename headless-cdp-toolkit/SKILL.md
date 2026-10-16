@@ -73,5 +73,5 @@ msedge --headless=new --disable-gpu --no-first-run --no-default-browser-check \
 
 ## Related skills
 
-`frontend-motion-audit` (what the artifacts contain), `chromium-crash-forensics` (when the
+`extracting-interaction-techniques` (what the artifacts contain), `chromium-crash-forensics` (when the
 browser dies instead of rendering).

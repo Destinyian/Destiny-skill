@@ -72,5 +72,5 @@ every 30 s → CSV) turns "it crashed again" into a curve.
 
 ## Related skills
 
-`tampermonkey-store-forensics` (what is actually injected), `frontend-motion-audit`
+`tampermonkey-store-forensics` (what is actually injected), `extracting-interaction-techniques`
 (whether the page itself is a memory hog), `headless-cdp-toolkit` (reproduce without the GUI).

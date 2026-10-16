@@ -1,5 +1,5 @@
 ---
-name: dsh-sandbox-workarounds
+name: windows-agent-sandbox-failures
 description: Use when commands fail for environment reasons rather than logic reasons inside a confined agent sandbox — schannel SEC_E_NO_CREDENTIALS or "The SSL connection could not be established", CIM/WMI access denied, EPERM when spawning a child with piped stdio, UnicodeEncodeError from a GBK console, a long command that gets backgrounded, or `spawn ENOENT` for an executable that demonstrably exists (a missing working directory, or a Microsoft Store app execution alias).
 ---
 

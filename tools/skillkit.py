@@ -409,6 +409,8 @@ def computed_entry(s: Skill, previous: dict | None) -> dict:
         "domain": prev.get("domain", "unclassified"),
         "cluster": prev.get("cluster", "unclassified"),
         "role": prev.get("role", "skill"),
+        "platform": prev.get("platform", ["any"]),
+        "requires": prev.get("requires", []),
         "maturity": prev.get("maturity", "draft"),
         "verified_on": prev.get("verified_on"),
         "triggers": prev.get("triggers", []),
@@ -469,13 +471,15 @@ def write_readme_index(entries: list[dict], index: dict) -> None:
     if start not in text or end not in text:
         print("README has no SKILLS markers; skipping README index")
         return
-    lines = [start, "", "| Skill | Domain / cluster | Maturity | Verified | Scripts | Evidence |", "|---|---|---|---|---|---|"]
+    lines = [start, "", "| Skill | Domain / cluster | Platform | Requires | Maturity | Verified | Scripts | Evidence |", "|---|---|---|---|---|---|---|---|"]
     order = sorted(entries, key=lambda e: (e["domain"], e["cluster"], e["name"]))
     for e in order:
         scripts = ", ".join(f"`{p}`" for p in e["scripts"]) or "—"
+        platform = ", ".join(e.get("platform") or ["any"])
+        requires = ", ".join(e.get("requires") or []) or "—"
         lines.append(
-            f"| [{e['name']}]({e['path']}/) | {e['domain']} / {e['cluster']} | {e['maturity']} | "
-            f"{e['verified_on'] or '—'} | {scripts} | {e['evidence_count']} |"
+            f"| [{e['name']}]({e['path']}/) | {e['domain']} / {e['cluster']} | {platform} | {requires} | "
+            f"{e['maturity']} | {e['verified_on'] or '—'} | {scripts} | {e['evidence_count']} |"
         )
     lines += ["", end]
     new_text = re.sub(re.escape(start) + r".*?" + re.escape(end), "\n".join(lines), text, flags=re.S)

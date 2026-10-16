@@ -18,7 +18,7 @@ are JSON stringified twice.
 | macOS / Linux | same `<Profile>/Local Extension Settings/<ext id>` under the vendor's User Data dir |
 
 Note the browser may be running: reads are safe (`.ldb` files are immutable; newest writes
-sit in `*.log`). `scripts/scan_crash_dumps.py`-style snapshots of mtimes also tell you whether the scripts
+sit in `*.log`). mtime snapshots (the approach `chromium-crash-forensics` takes) also tell you whether the scripts
 are still executing at all — useful when "it stopped" vs "it crashed" is the question.
 
 ## Record layout

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""audit_site_motion.py — audit a deployed page's rendering + motion stack offline.
+"""audit_page_signals.py — audit a deployed page's rendering + motion stack offline.
 
 Point it at a directory of assets you already downloaded (index.html + its JS/CSS,
 including lazy chunks) and it tells you: which framework/libs are used, whether the
@@ -13,7 +13,7 @@ Download first, e.g. with Node (works where PowerShell TLS is blocked):
       fs.writeFileSync('site'+(p==='/'?'/index.html':p),b)}})()"
 
 Then:
-    python audit_site_motion.py --dir ./site --out audit.md
+    python audit_page_signals.py --dir ./site --out audit.md
 """
 from __future__ import annotations
 
