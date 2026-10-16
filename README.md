@@ -38,6 +38,7 @@ cp -r <skill-name> ~/.claude/skills/     # or ~/.codex/skills/
 | [immersive-webgl-scene-patterns](immersive-webgl-scene-patterns/) | building/reviewing a WebGL hero, shader scene, particle field | the shell around the renderer is what ships: loading/ready/fallback state machine, pre-warmed lazy scene, keyboard parity, `1-exp(-k·dt)` damping, context-loss fallback, responsive FOV |
 | [codex-relay-model-triage](codex-relay-model-triage/) | "Model X is not available for this group", 404/403 from a relay | the model is pinned in **three** places — the provider manager's DB (which rewrites your config), the live config, and **per-conversation** (`threads.model`) — which is why "I changed it and nothing happened" |
 | [dsh-sandbox-workarounds](dsh-sandbox-workarounds/) | commands fail for *environment* reasons inside a sandbox | symptom → fix table: `SEC_E_NO_CREDENTIALS` → do TLS in Node; CIM denied → `Get-Process`; `EPERM` on piped stdio → `stdio:'ignore'` + CDP; GBK `UnicodeEncodeError` → write UTF-8 files |
+| [frontend-interaction-engineering](frontend-interaction-engineering/) | building or reviewing anything interactive — canvas scenes, drag toys, physics piles, "make it feel right" tuning | the rendering-path choice is a **measured** decision (fillText beat a sprite atlas 7.5×); a 6px drag threshold silently swallows real clicks; angle-of-repose piles must not shuffle after landing; monotone restores never bounce — and every one of those claims has a counter + a control experiment |
 
 ## Design rules used here
 
@@ -57,6 +58,10 @@ Extracted and generalised from Windows/Edge debugging sessions involving Tamperm
 a Codex relay configured through cc-switch, a Chromium renderer OOM, a Tencent CloudBase
 gated deployment, and a three.js black-hole hero. Machine-specific identifiers, tokens and
 paths were removed; the findings and constants were kept.
+
+## Session self-review
+
+[SELF-REVIEW-2026-10-15.md](SELF-REVIEW-2026-10-15.md) — the bug log (9 defects, only 1 found by the user), the counters and control experiments that caught them, and the environment lessons.
 
 ## License
 
