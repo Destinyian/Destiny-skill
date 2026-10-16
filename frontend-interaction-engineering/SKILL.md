@@ -76,6 +76,12 @@ if (len - colPiles[n].length >= need) colPiles[n].push(stack.pop());
 ```
 - **A one-grain threshold oscillates forever** and the pile never settles. Require a two-grain
   difference (or move fractional height instead of whole grains).
+- **Too small a repose threshold flattens the pile into one ridge with a plateau top.** The
+  threshold is a *height* difference, so with ~2 grains the mass spreads until every neighbour
+  differs by one grain: a wide, low, flat-topped bar — the "rug" that reads as "no mountains".
+  The same mass stands up as distinct triangular peaks with valleys once the threshold is
+  ~20–30 px of height per column (≈4–6 grains). If the pile looks like a rug, raise the repose,
+  not the jitter — and re-check that the settled state still has zero transfers.
 - **Frame-by-frame flow is visible as shuffling** — the pile keeps rearranging after it looks
   settled. If you want "lands and is done": **relax the mass histogram up-front**, give every
   particle its final column, let it slide there while falling, and suppress the per-frame flow
@@ -123,6 +129,11 @@ if (!busy) { raf = null; return; }                    // stop the loop entirely 
 - **Pause on `document.hidden`**, reset `last = now` on resume, and honour
   `prefers-reduced-motion` by *reducing work* (skip the animation, or throttle the loop), not
   just by disabling CSS transitions.
+
+- **Never write a DOM readout every frame.** A HUD that sets `textContent` and calls a stats
+  function (which may walk every particle) each frame forces a style/layout recalculation 60
+  times a second. It is often the single biggest cost on a demo page and it is invisible in the
+  renderer's own timing. Throttle it to a few Hz, and stop it while the scene is idle.
 
 ## 5. State and lifecycle
 
