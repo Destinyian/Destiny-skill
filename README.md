@@ -35,7 +35,7 @@ cp -r <skill-name> ~/.claude/skills/     # or ~/.codex/skills/ or ~/.agents/skil
 | Skill | Use it when | The non-obvious part |
 |---|---|---|
 | [chromium-crash-forensics](chromium-crash-forensics/) | the browser died, a tab shows "Aw, Snap!", "is it the browser or the extension?" | `0xE0000008` means renderer **out of memory** — cumulative over unattended hours, on a machine with 4.9 GB free; and userscripts run **inside** the page renderer, so page-vs-userscript needs an experiment, not a process listing |
-| [tampermonkey-store-forensics](tampermonkey-store-forensics/) | you need a userscript's real source or settings; it "stopped working" | the store is Snappy-compressed LevelDB with double-encoded JSON — `grep`/`strings` cannot work; a 60-line raw Snappy decoder + LevelDB table walk can |
+| [tampermonkey-store-forensics](tampermonkey-store-forensics/) | you need a userscript's real source or settings; it "stopped working" | the store is Snappy-compressed LevelDB with double-encoded JSON — `grep`/`strings` cannot work; a 41-line raw Snappy decoder + LevelDB table walk can |
 | [headless-cdp-toolkit](headless-cdp-toolkit/) | a page must be rendered to be understood; interstitial gates; viewport screenshots | DevTools Protocol over Node's built-in `WebSocket`/`fetch` — no Playwright; `--dump-dom` cannot click, `--screenshot` fires too early |
 | [frontend-motion-audit](frontend-motion-audit/) | "is this WebGL or an image?", "what is this site built with?", before optimizing | heavy rendering hides in **lazy chunks** (`import("./scene-*.js")`) — scanning only the entry bundle produces confidently wrong answers |
 | [immersive-webgl-scene-patterns](immersive-webgl-scene-patterns/) | building/reviewing a WebGL hero, shader scene, particle field | the shell around the renderer is what ships: loading/ready/fallback state machine, pre-warmed lazy scene, keyboard parity, `1-exp(-k·dt)` damping, context-loss fallback, responsive FOV |
@@ -100,7 +100,7 @@ paths were removed; the findings and constants were kept.
 
 ## Session self-review
 
-[journal/2026-10-15-session-self-review.md](journal/2026-10-15-session-self-review.md) — the bug log (9 defects, only 1 found by the user), the counters and control experiments that caught them, and the environment lessons.
+[journal/2026-10-15-session-self-review.md](journal/2026-10-15-session-self-review.md) — the bug log (10 defects, 2 of them found by the user), the counters and control experiments that caught them, and the environment lessons.
 
 ## License
 
