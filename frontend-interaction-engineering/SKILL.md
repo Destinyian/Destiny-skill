@@ -90,6 +90,12 @@ if (len - colPiles[n].length >= need) colPiles[n].push(stack.pop());
   the mass (rounded apex, so it does not read as sharp; flank slope at or below the
   threshold) and leave the remainder as a flat bed. Keep the dome slope two units *below* the
   threshold so integer rounding cannot start a flow, and the pile still lands static.
+- **Measure the volume of overlapping shapes; never trust the nominal area.** The dome profile
+  was sized as `N·A·W`, but overlapping domes carry less than that, so the integer split ran
+  short of the mass — the leftovers silently fell back to the dynamic landing path, and the
+  pile still *looked* right while the "static the moment it lands" guarantee was quietly gone.
+  One assertion catches it: `sum(counts) === total`. Write the test before believing the
+  guarantee.
 - **Frame-by-frame flow is visible as shuffling** — the pile keeps rearranging after it looks
   settled. If you want "lands and is done": **relax the mass histogram up-front**, give every
   particle its final column, let it slide there while falling, and suppress the per-frame flow
