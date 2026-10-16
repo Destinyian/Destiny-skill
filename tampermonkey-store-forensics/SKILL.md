@@ -35,7 +35,7 @@ are still executing at all — useful when "it stopped" vs "it crashed" is the q
 
 1. **Naive decode "works" then produces garbage.** UTF-8 decoding a raw `.ldb` yields long
    readable runs interrupted by replacement chars — those are Snappy tag bytes, not corruption.
-   You must actually decompress (`crash`-free 60-line raw Snappy decoder in `scripts/extract_tampermonkey_store.py`).
+   You must actually decompress (`crash`-free 41-line raw Snappy decoder in `scripts/extract_tampermonkey_store.py`).
 2. **Values are encoded more than once.** `@source` often needs `json.loads` twice; `.get("value")`
    can be a string, a dict, or a JSON string containing a dict. Unwrap in a loop until stable
    (see `unescape_deep`).
