@@ -317,7 +317,7 @@ def validate(skills: list[Skill], index: dict) -> list[tuple[str, str, str, str]
 
         # W03 zombie: no evidence of its own and no journal reference either
         if s.evidence_count == 0 and not entry.get("evidence_refs"):
-            warn("W03", s.dir_name, "no evidence entries and no evidence_refs — is this skill alive?")
+            warn("W03", s.dir_name, "no evidence entries and no evidence_refs - is this skill alive?")
 
         maturity = entry.get("maturity", "draft")
         if maturity not in {"draft", "verified", "field-tested", "routed"}:
