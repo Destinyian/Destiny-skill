@@ -61,6 +61,3 @@ the app's own copy from the JS (a surprisingly good component inventory — that
 `headless-cdp-toolkit` (see it rendered, force the fallback), `chromium-crash-forensics`
 (when a heavy page takes the renderer down with it).
 
-## Cluster router
-
-`frontend-rendering-triage` — when the symptom is real but the technique is not yet chosen.

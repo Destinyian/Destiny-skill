@@ -32,10 +32,6 @@ cp -r <skill-name> ~/.claude/skills/     # or ~/.codex/skills/ or ~/.agents/skil
 
 ## The collection
 
-Routers: [frontend-rendering-triage](frontend-rendering-triage/) fronts the `frontend/rendering`
-cluster — load it when the symptom is clear but the technique is not ("it feels janky", "should
-this be canvas or DOM?"). It holds no patterns of its own; it chooses between three skills below.
-
 | Skill | Use it when | The non-obvious part |
 |---|---|---|
 | [chromium-crash-forensics](chromium-crash-forensics/) | the browser died, a tab shows "Aw, Snap!", "is it the browser or the extension?" | `0xE0000008` means renderer **out of memory** — cumulative over unattended hours, on a machine with 4.9 GB free; and userscripts run **inside** the page renderer, so page-vs-userscript needs an experiment, not a process listing |
@@ -43,9 +39,17 @@ this be canvas or DOM?"). It holds no patterns of its own; it chooses between th
 | [headless-cdp-toolkit](headless-cdp-toolkit/) | a page must be rendered to be understood; interstitial gates; viewport screenshots | DevTools Protocol over Node's built-in `WebSocket`/`fetch` — no Playwright; `--dump-dom` cannot click, `--screenshot` fires too early |
 | [frontend-motion-audit](frontend-motion-audit/) | "is this WebGL or an image?", "what is this site built with?", before optimizing | heavy rendering hides in **lazy chunks** (`import("./scene-*.js")`) — scanning only the entry bundle produces confidently wrong answers |
 | [immersive-webgl-scene-patterns](immersive-webgl-scene-patterns/) | building/reviewing a WebGL hero, shader scene, particle field | the shell around the renderer is what ships: loading/ready/fallback state machine, pre-warmed lazy scene, keyboard parity, `1-exp(-k·dt)` damping, context-loss fallback, responsive FOV |
-| [codex-relay-model-triage](codex-relay-model-triage/) | "Model X is not available for this group", 404/403 from a relay | the model is pinned in **three** places — the provider manager's DB (which rewrites your config), the live config, and **per-conversation** (`threads.model`) — which is why "I changed it and nothing happened" |
 | [dsh-sandbox-workarounds](dsh-sandbox-workarounds/) | commands fail for *environment* reasons inside a sandbox | symptom → fix table: `SEC_E_NO_CREDENTIALS` → do TLS in Node; CIM denied → `Get-Process`; `EPERM` on piped stdio → `stdio:'ignore'` + CDP; GBK `UnicodeEncodeError` → write UTF-8 files; `spawn ENOENT` for an executable that exists → a **missing working directory**, not a missing binary |
 | [frontend-interaction-engineering](frontend-interaction-engineering/) | building or reviewing anything interactive — canvas scenes, drag toys, physics piles, "make it feel right" tuning | the rendering-path choice is a **measured** decision (fillText beat a sprite atlas 7.5×); a 6px drag threshold silently swallows real clicks; angle-of-repose piles must not shuffle after landing; monotone restores never bounce — and every one of those claims has a counter + a control experiment |
+
+## Notes
+
+True knowledge that does **not** earn a place in the skill catalogue: it costs context in every
+session while only working on one machine's tooling. Kept here so it is not lost.
+
+- [notes/relay-model-triage/](notes/relay-model-triage/) — the three layers that pin a model name on
+  a relay (provider-manager DB, live config, per-conversation model), what each error string means,
+  and a script that prints all three.
 
 ## Index
 
@@ -55,14 +59,12 @@ Generated from `skills.json`. Do not edit by hand — run `python tools/skillkit
 
 | Skill | Domain / cluster | Maturity | Verified | Scripts | Evidence |
 |---|---|---|---|---|---|
-| [codex-relay-model-triage](codex-relay-model-triage/) | agent-ops / environment | verified | 2026-10-15 | `scripts/trace_model_resolution.py` | 0 |
 | [dsh-sandbox-workarounds](dsh-sandbox-workarounds/) | agent-ops / environment | field-tested | 2026-10-16 | — | 1 |
 | [chromium-crash-forensics](chromium-crash-forensics/) | browser / investigation | verified | 2026-10-15 | `scripts/scan_crash_dumps.py` | 0 |
 | [headless-cdp-toolkit](headless-cdp-toolkit/) | browser / investigation | verified | 2026-10-15 | `scripts/render-page.js` | 0 |
 | [tampermonkey-store-forensics](tampermonkey-store-forensics/) | browser / investigation | verified | 2026-10-15 | `scripts/extract_tampermonkey_store.py` | 0 |
 | [frontend-interaction-engineering](frontend-interaction-engineering/) | frontend / rendering | verified | 2026-10-15 | — | 0 |
 | [frontend-motion-audit](frontend-motion-audit/) | frontend / rendering | verified | 2026-10-15 | `scripts/audit_site_motion.py` | 0 |
-| [frontend-rendering-triage](frontend-rendering-triage/) | frontend / rendering | draft | — | — | 0 |
 | [immersive-webgl-scene-patterns](immersive-webgl-scene-patterns/) | frontend / rendering | verified | 2026-10-15 | — | 0 |
 
 <!-- SKILLS:END -->

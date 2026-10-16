@@ -193,3 +193,38 @@ overlap" from "these are in the same domain". Gating on it would only train peop
 checker; `cluster` prints the top five against the baseline for human review instead. When two
 skills genuinely conflict — same concept, different constant — that is a job for the evolution
 loop, not for a threshold.
+
+## 11. What earns a skill (and what gets demoted)
+
+A skill costs context in **every** session that could load it, so a directory has to earn its place.
+The test, applied in order:
+
+1. **Will the symptom come back?** A one-off incident is a journal entry, not a skill.
+2. **Does it carry an instrument or a criterion?** A reusable script that produces evidence, a
+   decision table for a recurring symptom, or the *only* viable method for a problem. Narrative
+   alone does not qualify.
+3. **Does it transfer?** Count machine anchors — absolute paths, one vendor's database schema, one
+   site's constants. Two or fewer anchors alongside several measured numbers is a skill; a dozen
+   anchors with no numbers is a note.
+4. **Is the structure verified?** A hub whose routing scenario has never actually been observed is
+   speculation. Delete it and rebuild it with `skillkit.py new` when the scenario appears.
+
+**Demotion beats deletion.** Move the directory to `notes/<topic>/`, rename `SKILL.md` to
+`README.md`, strip the frontmatter, drop it from every `related` list, and link it from the README.
+The knowledge survives, the context cost goes to zero, and `index --write` removes it from the
+catalogue. Deleting is for structure that was never true; demoting is for knowledge that is true but
+local.
+
+First application, 2026-10-16 — measured hard numbers / machine anchors per skill:
+
+| Skill | Numbers | Anchors | Outcome |
+|---|---|---|---|
+| frontend-interaction-engineering | 14 | 0 | keep |
+| immersive-webgl-scene-patterns | 14 | 2 | keep |
+| chromium-crash-forensics | 2 | 3 | keep (ships an instrument) |
+| frontend-motion-audit | 2 | 0 | keep (ships an instrument) |
+| headless-cdp-toolkit | 1 | 1 | keep (ships an instrument) |
+| tampermonkey-store-forensics | 0 | 1 | keep (only viable method) |
+| dsh-sandbox-workarounds | 0 | 1 | keep (highest recurrence here) |
+| codex-relay-model-triage | 0 | 13 | **demoted to `notes/`** |
+| frontend-rendering-triage | — | — | **deleted** (unverified routing assumption) |

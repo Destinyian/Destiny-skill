@@ -1,8 +1,12 @@
----
-name: codex-relay-model-triage
-description: Use when an OpenAI-compatible relay/proxy answers "Model X is not available for this group", 404 on /responses, or 403 "Insufficient account balance" — or when someone says "I changed the model but it still fails". Traces the effective model through the provider manager DB, the live client config and the per-conversation model, then verifies which model names the account's group actually offers.
----
+# Relay model triage (note, not a skill)
 
+Demoted from a skill on 2026-10-16. Reason: this knowledge is bound to one machine's tooling
+(cc-switch's SQLite schema, `~/.codex` layout) — 13 machine-specific anchors and zero transferable
+measurements, so a stranger cannot use it and a tool upgrade silently invalidates it. It stays here
+because it is still the fastest path when *this* relay misbehaves; see
+[journal/2026-10-16-pruning-the-library.md](../../journal/2026-10-16-pruning-the-library.md).
+
+The script below still works: `python notes/relay-model-triage/scripts/trace_model_resolution.py`.
 # "Model not available for this group" — find the model that is actually being sent
 
 ## The three layers that pin a model

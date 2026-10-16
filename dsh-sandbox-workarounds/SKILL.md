@@ -40,5 +40,5 @@ resort, not a first step.
 
 ## Related skills
 
-`codex-relay-model-triage` (uses the Node-fetch fallback to probe a provider),
+
 `headless-cdp-toolkit` (uses `stdio: 'ignore'` + CDP instead of piped stdio).

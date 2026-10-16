@@ -251,6 +251,3 @@ treat them as sane starting points, not laws.
 which production concerns are missing), `frontend-interaction-engineering` (gesture
 disambiguation, click-vs-drag thresholds, counters for feel), `headless-cdp-toolkit` (verify the
 fallback and the state machine without a GUI).
-## Cluster router
-
-`frontend-rendering-triage` — when the symptom is real but the technique is not yet chosen.
