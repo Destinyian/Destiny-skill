@@ -1,0 +1,11 @@
+# Build and run artifacts — never commit these
+__pycache__/
+*.py[co]
+*.log
+
+# Node
+node_modules/
+
+# Skill script output directories (the tools write here, not the repo)
+tm-out/
+motion-audit.md
