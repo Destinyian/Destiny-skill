@@ -82,6 +82,14 @@ if (len - colPiles[n].length >= need) colPiles[n].push(stack.pop());
   The same mass stands up as distinct triangular peaks with valleys once the threshold is
   ~20–30 px of height per column (≈4–6 grains). If the pile looks like a rug, raise the repose,
   not the jitter — and re-check that the settled state still has zero transfers.
+- **To control *how many* peaks there are, shape the profile — do not just tune the
+  threshold.** The repose threshold decides how far mass *can* spread, so on a full-width
+  text block it gives either one flat ridge (small threshold) or one sharp peak per lump of
+  the mass histogram (large threshold). Neither is "a few mountains with flat ground between
+  them". Compute the settled column heights explicitly: give N raised-cosine domes a share of
+  the mass (rounded apex, so it does not read as sharp; flank slope at or below the
+  threshold) and leave the remainder as a flat bed. Keep the dome slope two units *below* the
+  threshold so integer rounding cannot start a flow, and the pile still lands static.
 - **Frame-by-frame flow is visible as shuffling** — the pile keeps rearranging after it looks
   settled. If you want "lands and is done": **relax the mass histogram up-front**, give every
   particle its final column, let it slide there while falling, and suppress the per-frame flow
