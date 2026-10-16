@@ -20,10 +20,15 @@
         "is it the browser or the extension"
       ],
       "related": [
-        "tampermonkey-store-forensics",
-        "headless-cdp-toolkit"
+        "frontend-motion-audit",
+        "headless-cdp-toolkit",
+        "tampermonkey-store-forensics"
       ],
-      "referenced_by": [],
+      "referenced_by": [
+        "frontend-motion-audit",
+        "headless-cdp-toolkit",
+        "tampermonkey-store-forensics"
+      ],
       "evidence_refs": [
         "journal/2026-10-15-session-self-review.md"
       ],
@@ -52,7 +57,9 @@
       "related": [
         "dsh-sandbox-workarounds"
       ],
-      "referenced_by": [],
+      "referenced_by": [
+        "dsh-sandbox-workarounds"
+      ],
       "evidence_refs": [
         "journal/2026-10-15-session-self-review.md"
       ],
@@ -83,7 +90,9 @@
         "codex-relay-model-triage",
         "headless-cdp-toolkit"
       ],
-      "referenced_by": [],
+      "referenced_by": [
+        "codex-relay-model-triage"
+      ],
       "evidence_refs": [
         "dsh-sandbox-workarounds/EVIDENCE.md"
       ],
@@ -112,12 +121,14 @@
         "immersive-webgl-scene-patterns",
         "frontend-motion-audit"
       ],
-      "referenced_by": [],
+      "referenced_by": [
+        "immersive-webgl-scene-patterns"
+      ],
       "evidence_refs": [
         "journal/2026-10-15-session-self-review.md"
       ],
       "description": "Use when building or reviewing an interactive front-end component — canvas/WebGL scenes, drag-and-drop toys, physics piles, scroll or pointer effects, \"make this feel right\" tuning. Covers the rendering-path choice, gesture design and the click-vs-drag traps, physics patterns that read as natural (angle-of-repose piles, monotone restores, integer snapping), frame-loop hygiene, and how to verify feel objectively with counters and control experiments rather than screenshots.",
-      "body_lines": 216,
+      "body_lines": 224,
       "scripts": [],
       "evidence_count": 0
     },
@@ -137,10 +148,16 @@
         "lazy chunk scan"
       ],
       "related": [
-        "immersive-webgl-scene-patterns",
-        "headless-cdp-toolkit"
+        "chromium-crash-forensics",
+        "headless-cdp-toolkit",
+        "immersive-webgl-scene-patterns"
       ],
-      "referenced_by": [],
+      "referenced_by": [
+        "chromium-crash-forensics",
+        "frontend-interaction-engineering",
+        "headless-cdp-toolkit",
+        "immersive-webgl-scene-patterns"
+      ],
       "evidence_refs": [
         "journal/2026-10-15-session-self-review.md"
       ],
@@ -170,7 +187,13 @@
         "chromium-crash-forensics",
         "frontend-motion-audit"
       ],
-      "referenced_by": [],
+      "referenced_by": [
+        "chromium-crash-forensics",
+        "dsh-sandbox-workarounds",
+        "frontend-motion-audit",
+        "immersive-webgl-scene-patterns",
+        "tampermonkey-store-forensics"
+      ],
       "evidence_refs": [
         "journal/2026-10-15-session-self-review.md"
       ],
@@ -199,14 +222,18 @@
       ],
       "related": [
         "frontend-interaction-engineering",
+        "frontend-motion-audit",
+        "headless-cdp-toolkit"
+      ],
+      "referenced_by": [
+        "frontend-interaction-engineering",
         "frontend-motion-audit"
       ],
-      "referenced_by": [],
       "evidence_refs": [
         "journal/2026-10-15-session-self-review.md"
       ],
       "description": "Use when building or reviewing an immersive hero/scene component — a WebGL black hole, particle field, shader-driven landing hero, or any \"wow\" interactive canvas. Covers the progressive-enhancement state machine, lazy scene loading with pre-warm, static-image fallback, pointer drag + keyboard parity, frame-rate-independent damping, frame-loop hygiene (delta clamp, visibility pause, context loss), DPR/responsive-FOV handling, and how to verify it headlessly.",
-      "body_lines": 246,
+      "body_lines": 253,
       "scripts": [],
       "evidence_count": 0
     },
@@ -226,9 +253,12 @@
         "GM_setValue config"
       ],
       "related": [
+        "chromium-crash-forensics",
+        "headless-cdp-toolkit"
+      ],
+      "referenced_by": [
         "chromium-crash-forensics"
       ],
-      "referenced_by": [],
       "evidence_refs": [
         "journal/2026-10-15-session-self-review.md"
       ],

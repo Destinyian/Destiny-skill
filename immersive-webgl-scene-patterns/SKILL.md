@@ -244,3 +244,10 @@ Distilled from a real deployed site (Tencent CloudBase static hosting, Vite + Re
 three.js scene in a lazy chunk). Constants quoted (`0.15s` clamp, `k=13`, `aspect<0.8 → fov 65`,
 `±0.7` play area, `0.035/0.1` key steps, `500ms` click suppression) come from that codebase;
 treat them as sane starting points, not laws.
+
+## Related skills
+
+`frontend-motion-audit` (the same techniques from the audit side: what the lazy chunk contains,
+which production concerns are missing), `frontend-interaction-engineering` (gesture
+disambiguation, click-vs-drag thresholds, counters for feel), `headless-cdp-toolkit` (verify the
+fallback and the state machine without a GUI).

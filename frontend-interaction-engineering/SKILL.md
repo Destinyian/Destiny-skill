@@ -214,3 +214,11 @@ Distilled from building a "gravity letters" component (text rasterised into thou
 characters that can be peeled by hover, dropped as a sheet, piled, and restored), including the
 measured benchmarks, the oscillation/settle bugs, and the counters above. Numbers are from
 headless Chromium on one machine: treat the **ratios** as the durable result.
+
+## Related skills
+
+`immersive-webgl-scene-patterns` (the shell around a WebGL hero: loading/fallback state machine,
+context loss, responsive FOV), `frontend-motion-audit` (audit the deployed artifact before you
+rewrite it). Note the deliberate difference in `dt` bounds: interaction snapping clamps to
+`0.001-0.05` because a loose bound lets a dropped glyph overshoot, while a scene-damping loop
+clamps to `0.15` because a tight bound makes a returned-from-background frame crawl.
