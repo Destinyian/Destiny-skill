@@ -52,6 +52,17 @@ Rules that survive contact with users:
 - **Give every pointer interaction a keyboard twin** (Space/Enter to toggle, R to reset,
   arrow keys to nudge) and a focusable element with an `aria-label` describing the gestures.
 - **Bound the play area** and clamp: a subject the user can fling off-screen reads as a bug.
+- **One press must produce one action.** A real click delivers `pointerup` *and*
+  `lostpointercapture` (sometimes `pointercancel`) for the same press. Route all of them to
+  one handler without a guard and a single click toggles twice — the collapse fires and is
+  instantly undone, which the user reports as "the click does nothing". Guard on state:
+
+  ```js
+  function onPointerUp(ev) {
+    if (pointer.id === -1) return;     // already handled: duplicate from the same press
+    ...
+  }
+  ```
 
 ## 3. Physics that reads as natural
 
