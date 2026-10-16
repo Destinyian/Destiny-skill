@@ -63,6 +63,19 @@ FENCED_BLOCK_RE = re.compile(r"^```.*?^```", re.M | re.S)
 CJK_RE = re.compile(r"[\u3000-\u303f\u3400-\u4dbf\u4e00-\u9fff\uff00-\uffef]")
 DESCRIPTION_OPENING_RE = re.compile(r"^use (?:when|before|after|while|if|during)\b")
 
+# The seven fields of an idea card (CONVENTIONS.md section 11). A card missing any of them is not
+# finished, so the check is an error rather than a warning: an unfinished card is what turns the
+# catalogue back into a pile of notes.
+IDEA_FIELDS = [
+    ("the claim", r"\*\*The idea\.\*\*"),
+    ("provenance", r"\*\*Where it came from\.\*\*"),
+    ("recall triggers", r"\*\*Recall it when\.\*\*"),
+    ("how to apply", r"(?m)^## How to apply"),
+    ("boundaries", r"(?m)^## Boundaries"),
+    ("evidence", r"(?m)^## Evidence"),
+    ("verify", r"(?m)^## Verify"),
+]
+
 # A script's own usage text is where the "renamed but not everywhere" class of bug lives, so the
 # header (module docstring) and every `python x.py` / `node x.js` invocation are checked.
 SCRIPT_TOKEN_RE = re.compile(r"(?<![\w./\\-])([A-Za-z0-9_\-]+\.(?:py|js))")
@@ -294,6 +307,11 @@ def validate(skills: list[Skill], index: dict) -> list[tuple[str, str, str, str]
                 err("E07", s.dir_name, f"SKILL.md references missing path: {ref}")
             elif where != "local":
                 warn("W07", s.dir_name, f"references another skill's file: {ref} (in {where})")
+
+        # E17 an idea card must carry all seven fields
+        for field, pattern in IDEA_FIELDS:
+            if not re.search(pattern, s.raw):
+                err("E17", s.dir_name, f"card is missing the '{field}' field (see CONVENTIONS.md section 11)")
 
         # E13 a script must not tell the reader to run a file that does not exist
         for sc in s.scripts:
@@ -572,9 +590,10 @@ def new_skill(name: str) -> int:
     if target.exists():
         print(f"error: {name} already exists")
         return 2
-    template = (ROOT / "templates" / "skill" / SKILL_FILE).read_text(encoding="utf-8")
+    template = (ROOT / "templates" / "idea" / SKILL_FILE).read_text(encoding="utf-8")
     (target / "scripts").mkdir(parents=True)
-    (target / SKILL_FILE).write_text(template.replace("skill-name", name), encoding="utf-8")
+    body = template.replace("idea-name-as-an-assertion", name).replace("skill-name", name)
+    (target / SKILL_FILE).write_text(body, encoding="utf-8")
     (target / "EVIDENCE.md").write_text(
         f"# Evidence - {name}\n\nAppend-only. One entry per real session that used this skill.\n"
         "See EVOLUTION.md for the entry format.\n",

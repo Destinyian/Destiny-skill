@@ -181,6 +181,7 @@ agent-ops   environment      windows-agent-sandbox-failures
 | E11 / E14 / E15 | error | `related` skills exist, are mentioned in the body, and `referenced_by` is their exact inverse |
 | E12 | error | no trigger phrase is claimed by two skills |
 | E13 | error | a script must not tell the reader to run a file that exists nowhere — `python old_name.py` after a rename is the canonical case |
+| E17 | error | an idea card carries all seven fields (claim, provenance, recall triggers, how to apply, boundaries, evidence, verify) — a card missing one is unfinished |
 | W01–W07 | warn | CJK in a body, description token overlap, body near 500 lines, fewer than 3 triggers, first-person description, cross-skill file reference, no evidence at all |
 
 `referenced_by` is **generated** (the inverse of `related`); `index --write` maintains it, so never
@@ -214,6 +215,11 @@ Required fields of an idea card — a skill that is missing any of them is not f
 An idea may be an extraction procedure, an instrument, or an authoring rule — those are the *kinds*
 of idea, not the definition. A skill that carries no idea (a narrative, a topic summary, a topic
 list) is a journal entry, not a skill, however true it is.
+
+The seven fields are **enforced**, not advised: `check` fails with E17 when any of them is missing,
+and `skillkit.py new` scaffolds a card that already satisfies the gate. The gate was verified by
+removing the boundaries section from a card and confirming the check goes red — a gate that cannot
+fail proves nothing.
 
 **A skill is a procedure over an artifact**: it names what it consumes, the checklist that turns that
 into findings, and the output a reader can act on. Narrative alone is a journal entry; a topic
