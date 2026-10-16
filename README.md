@@ -32,17 +32,19 @@ is a journal entry, however true it is.
 
 ## Who this is for
 
-Anyone debugging on a machine they cannot fully instrument:
+Anyone who has to judge or build something they cannot yet read:
 
-- a browser that dies overnight and reports nothing useful in the morning
-- a userscript that stopped working, whose real source you need
-- a site whose rendering you must judge without hand-opening DevTools
-- an interactive component that "feels wrong" and needs numbers, not opinions
-- a confined agent sandbox where commands fail for reasons that are not the command's fault
+- handed a page and told "make ours feel like this one" — you need the techniques, not a description
+- a front-end that "feels wrong", never settles, or fires twice per click
+- a hero or shader scene that must **ship**, not just render on your machine
+- a page you cannot inspect by hand: JS-only, gated, or only comparable across viewports
+- a browser store whose contents text tools cannot see
+- any check that answers "not there" while the problem is still there
 
 **What this is not:** not a library you import, not a framework, not a substitute for your own
-judgement. The scripts read artifacts and print evidence; the decisions stay yours. Some skills are
-Windows-specific — the index below states the platform and the runtime each one needs.
+judgement. The scripts read artifacts and print evidence; the decisions stay yours. Nor is it an
+operations or diagnostics handbook any more — the skills that only explained a failure, without
+producing anything to build from, were removed; `git log` still has them.
 
 Zero dependencies is a hard rule (Python 3.10+ standard library, or Node 22+ built-ins): these are
 meant to run on a machine where installing something is the thing that is broken.
@@ -75,15 +77,14 @@ site?"), so an agent can match it without reading the body. Two skills name a si
 
 | Skill | Use it when | The non-obvious part |
 |---|---|---|
-| [chromium-crash-forensics](chromium-crash-forensics/) | the browser died, a tab shows "Aw, Snap!", "is it the browser or the extension?" | `0xE0000008` means renderer **out of memory** — cumulative over unattended hours, on a machine with plenty of free memory; and userscripts run **inside** the page renderer, so page-vs-userscript needs an experiment, not a process listing |
-| [tampermonkey-store-forensics](tampermonkey-store-forensics/) | you need a userscript's real source or settings; it "stopped working" | the store is Snappy-compressed LevelDB with double-encoded JSON — `grep`/`strings` cannot work; a 41-line raw Snappy decoder + LevelDB table walk can |
-| [headless-cdp-toolkit](headless-cdp-toolkit/) | a page must be rendered to be understood; interstitial gates; viewport screenshots | DevTools Protocol over Node's built-in `WebSocket`/`fetch` — no Playwright; `--dump-dom` cannot click, `--screenshot` fires too early |
-| [extracting-interaction-techniques](extracting-interaction-techniques/) | you are handed a page (URL, bundle, "make ours feel like this one") and need the techniques behind it, not a description | heavy rendering hides in **lazy chunks** — scanning only the entry bundle produces confidently wrong answers; output is a fixed 9-field entry per technique (evidence, parameters tagged measured/estimated, skeleton, confidence) |
-| [precompute-the-rest-state](precompute-the-rest-state/) | a pile, layout, restore or drag toy "never settles" / "jitters forever" / "bounces" | compute the end state and animate toward it instead of simulating into it — streaming relax measured ~6,200 post-settle moves and 13,931 overshoots where the precomputed version is 0/0 |
-| [immersive-webgl-scene-patterns](immersive-webgl-scene-patterns/) | building/reviewing a WebGL hero, shader scene, particle field | the shell around the renderer is what ships: loading/ready/fallback state machine, pre-warmed lazy scene, keyboard parity, `1-exp(-k·dt)` damping, context-loss fallback, responsive FOV |
-| [windows-agent-sandbox-failures](windows-agent-sandbox-failures/) | commands fail for *environment* reasons inside a confined agent sandbox | symptom → fix table: `SEC_E_NO_CREDENTIALS` → do TLS in Node; CIM denied → `Get-Process`; `EPERM` on piped stdio → `stdio:'ignore'` + CDP; GBK `UnicodeEncodeError` → write UTF-8 files; `spawn ENOENT` for an executable that exists → a **missing working directory**, not a missing binary |
-| [frontend-interaction-engineering](frontend-interaction-engineering/) | building or reviewing anything interactive — canvas scenes, drag toys, physics piles, "make it feel right" tuning | the rendering-path choice is a **measured** decision (fillText beat a sprite atlas 7.5×); a 6px drag threshold silently swallows real clicks; angle-of-repose piles must not shuffle after landing; monotone restores never bounce — and every one of those claims has a counter + a control experiment |
-
+| [the-probe-lies](the-probe-lies/) | a check says "not there" while the problem is still there — no dump found, `grep` finds nothing, `ENOENT` for a file that exists | a negative probe is evidence about the **probe**, not the world. Six documented incidents of the same mistake, and the second probe that settles each one |
+| [precompute-the-rest-state](precompute-the-rest-state/) | a pile, layout, restore or drag toy "never settles" / "jitters forever" / "bounces" | compute the end state and animate toward it instead of simulating into it — ~6,200 post-settle moves and 13,931 overshoots on the streaming path, 0 and 0 on the precomputed one |
+| [measure-the-rendering-path](measure-the-rendering-path/) | choosing how to draw (atlas vs per-item text, canvas vs DOM, WebGL vs CSS), or a canvas is slow | the folklore lost here: a pre-rendered glyph atlas cost **7.5×** what plain `fillText` did. Benchmark at the real count, report ratios, keep the loser as a switch |
+| [one-press-one-action](one-press-one-action/) | one click does two things — "the toggle undoes itself", "it collapses and instantly restores" | one press emits `pointerup` **and** `lostpointercapture`; route both to one handler without a state guard and every press acts twice. Synthetic events cannot reproduce it |
+| [the-shell-is-what-ships](the-shell-is-what-ships/) | building or reviewing an immersive hero, shader scene, full-bleed canvas | the renderer is the demo, the shell is the product: state machine, composed fallback, `dt` clamp + exponential damping, `preventDefault()` on context loss, keyboard parity, FOV by aspect |
+| [render-it-or-you-are-guessing](render-it-or-you-are-guessing/) | "can you see this site?", JS-only SPA, a gate that needs a click, or verifying a change without a browser | `curl` returns a shell, `--dump-dom` cannot click, `--screenshot` fires too early — drive the DevTools Protocol from Node 22 built-ins and wait for a readiness signal |
+| [the-entry-bundle-lies](the-entry-bundle-lies/) | "what is this site built with?", "why is this page heavy?", before optimising or copying it | the entry bundle is the least informative file: a 222 KB entry had no `canvas` while the renderer sat in a 552 KB lazy chunk. Extract to implementable blocks, never to prose |
+| [grep-cannot-read-a-compressed-store](grep-cannot-read-a-compressed-store/) | you need a userscript's real source, its settings, or recovery after a profile move | the store is Snappy-compressed LevelDB with double-encoded JSON — text tools see nothing. A 41-line decoder plus a table walk reads both `.ldb` and `.log` |
 ## Notes
 
 True knowledge that does **not** earn a place in the skill catalogue: it costs context in every
@@ -101,14 +102,14 @@ Generated from `skills.json`. Do not edit by hand — run `python tools/skillkit
 
 | Skill | Domain / cluster | Platform | Requires | Maturity | Verified | Scripts | Evidence |
 |---|---|---|---|---|---|---|---|
-| [windows-agent-sandbox-failures](windows-agent-sandbox-failures/) | agent-ops / environment | windows | — | field-tested | 2026-10-16 | — | 1 |
-| [chromium-crash-forensics](chromium-crash-forensics/) | browser / investigation | windows | python>=3.10 | verified | 2026-10-15 | `scripts/scan_crash_dumps.py` | 0 |
-| [headless-cdp-toolkit](headless-cdp-toolkit/) | browser / investigation | windows, macos, linux | node>=22 | verified | 2026-10-15 | `scripts/render-page.js` | 0 |
-| [tampermonkey-store-forensics](tampermonkey-store-forensics/) | browser / investigation | windows, macos, linux | python>=3.10 | verified | 2026-10-15 | `scripts/extract_tampermonkey_store.py` | 0 |
-| [extracting-interaction-techniques](extracting-interaction-techniques/) | frontend / rendering | any | python>=3.10 | verified | 2026-10-15 | `scripts/audit_page_signals.py` | 1 |
-| [frontend-interaction-engineering](frontend-interaction-engineering/) | frontend / rendering | any | — | verified | 2026-10-15 | — | 0 |
-| [immersive-webgl-scene-patterns](immersive-webgl-scene-patterns/) | frontend / rendering | any | — | verified | 2026-10-15 | — | 0 |
+| [grep-cannot-read-a-compressed-store](grep-cannot-read-a-compressed-store/) | browser / data-extraction | windows, macos, linux | python>=3.10 | verified | 2026-10-15 | `scripts/extract_tampermonkey_store.py` | 0 |
+| [render-it-or-you-are-guessing](render-it-or-you-are-guessing/) | browser / observation | any | node>=22 | verified | 2026-10-15 | `scripts/render-page.js` | 0 |
+| [one-press-one-action](one-press-one-action/) | frontend / interaction | any | — | verified | 2026-10-15 | — | 0 |
+| [measure-the-rendering-path](measure-the-rendering-path/) | frontend / rendering | any | — | verified | 2026-10-15 | — | 0 |
 | [precompute-the-rest-state](precompute-the-rest-state/) | frontend / rendering | any | — | verified | 2026-10-15 | — | 1 |
+| [the-entry-bundle-lies](the-entry-bundle-lies/) | frontend / rendering | any | python>=3.10 | verified | 2026-10-15 | `scripts/audit_page_signals.py` | 0 |
+| [the-shell-is-what-ships](the-shell-is-what-ships/) | frontend / rendering | any | — | verified | 2026-10-15 | — | 0 |
+| [the-probe-lies](the-probe-lies/) | meta / reasoning | any | — | verified | 2026-10-16 | — | 0 |
 
 <!-- SKILLS:END -->
 

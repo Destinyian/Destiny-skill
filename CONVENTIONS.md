@@ -221,9 +221,10 @@ description alone is a reference page.
 
 | Kind | Consumes | Produces | In this library |
 |---|---|---|---|
-| **Extraction** | a page, a bundle, a browser store, a sample | findings that carry evidence, parameters and a code skeleton | `extracting-interaction-techniques`, `tampermonkey-store-forensics` |
-| **Instrument** | a URL or a live process | observations the other kinds consume | `headless-cdp-toolkit` |
-| **Authoring** | a design intent | code with measured defaults and their counter-examples | `frontend-interaction-engineering`, `immersive-webgl-scene-patterns` |
+| **Extraction** | a page, a bundle, a browser store, a sample | findings that carry evidence, parameters and a code skeleton | `the-entry-bundle-lies`, `grep-cannot-read-a-compressed-store` |
+| **Instrument** | a URL or a live process | observations the other kinds consume | `render-it-or-you-are-guessing` (ships `render-page.js`) |
+| **Authoring** | a design intent | code with measured defaults and their counter-examples | `the-shell-is-what-ships`, `measure-the-rendering-path`, `one-press-one-action` |
+| **Reasoning** | a negative or misleading result | the rule that replaces it | `the-probe-lies`, `precompute-the-rest-state` |
 
 **Extraction skills are graded on their output, not on their knowledge.** Every entry carries
 evidence (a file:line or an observed event), parameters tagged `measured | estimated`, and a
@@ -233,10 +234,11 @@ the analysis is correct: nobody can write code from it.
 An **instrument** is judged by whether its output is reproducible on the reader's machine — that is
 why zero dependencies is a hard rule.
 
-A skill that is neither extraction, instrument nor authoring is a **diagnostic** (it explains a
-failure rather than producing something to build). Diagnostics are still allowed to live in this
-repository, but they live in `notes/`, not in the catalogue: they cost context in every session
-while producing nothing anyone writes code from.
+A skill that is none of those four is a **diagnostic**: it explains a failure instead of producing
+something to build from. Diagnostics go to `notes/` when the knowledge is still needed and cannot be
+re-derived, and are deleted when the incident is already recorded as an instance of a reasoning card
+(§12). They do not stay in the catalogue: they cost context in every session while producing nothing
+anyone writes code from.
 
 ### What earns a directory (the pruning test)
 
@@ -257,16 +259,36 @@ The knowledge and the scripts survive, the context cost goes to zero, and `index
 from the catalogue. Deleting is for structure that was never true; demoting is for knowledge that is
 true but out of mission.
 
-Re-scored under this rule on 2026-10-16 (hard numbers / machine anchors as the transfer proxy):
+## 12. The catalogue after the 2026-10-16 re-scoring
 
-| Skill | Kind | Outcome |
+Every entry is one idea with all seven fields. Everything that was a manual, a procedure or a
+diagnostic was removed; the ideas inside the manuals were extracted first, and the instruments moved
+to the card that needs them.
+
+| Card | Kind | Carries |
 |---|---|---|
-| extracting-interaction-techniques | extraction (flagship) | keep |
-| tampermonkey-store-forensics | extraction (recovers source code) | keep |
-| headless-cdp-toolkit | instrument | keep |
-| frontend-interaction-engineering | authoring | keep |
-| immersive-webgl-scene-patterns | authoring | keep |
-| chromium-crash-forensics | diagnostic | pending decision — demote to `notes/` or keep |
-| windows-agent-sandbox-failures | diagnostic | pending decision — demote to `notes/` or keep |
-| codex-relay-model-triage | diagnostic, 13 anchors | demoted to `notes/` |
-| frontend-rendering-triage | unverified structure | deleted |
+| `the-probe-lies` | idea (meta) | the shape of the mistake this whole library came from |
+| `precompute-the-rest-state` | idea | compute the end state, never simulate into it |
+| `measure-the-rendering-path` | idea | the rendering path is measured, not remembered |
+| `one-press-one-action` | idea | one press emits several events |
+| `the-shell-is-what-ships` | idea | the shell, not the renderer, is the product |
+| `render-it-or-you-are-guessing` | idea + instrument | `scripts/render-page.js` |
+| `the-entry-bundle-lies` | idea + instrument | `scripts/audit_page_signals.py` |
+| `grep-cannot-read-a-compressed-store` | idea + instrument | `scripts/extract_tampermonkey_store.py` |
+
+Removed in the same pass, and where their content went:
+
+| Removed | Why | What survived |
+|---|---|---|
+| `frontend-interaction-engineering` (manual, 4 ideas) | a page of rules is not an idea | `measure-the-rendering-path`, `one-press-one-action`, and the feel counters inside `precompute-the-rest-state` |
+| `immersive-webgl-scene-patterns` (manual, 4 ideas) | same | `the-shell-is-what-ships` (states, fallback, damping, context loss, FOV, DPR) |
+| `extracting-interaction-techniques` (procedure) | a process without a claim | `the-entry-bundle-lies`, including the extraction output schema |
+| `headless-cdp-toolkit` (instrument) | an instrument needs a claim to belong to | `render-it-or-you-are-guessing` + its script |
+| `tampermonkey-store-forensics` (procedure) | same | `grep-cannot-read-a-compressed-store` + its script |
+| `chromium-crash-forensics` (diagnostic) | produces no code, only a verdict | the "absence of a dump proves nothing" incident, now an instance in `the-probe-lies`; the minidump parser is in git history only |
+| `windows-agent-sandbox-failures` (diagnostic) | environment fix-ups, nothing to build | the `spawn ENOENT` incident, now an instance in `the-probe-lies` |
+| `codex-relay-model-triage` | diagnostic, 13 machine anchors | `notes/relay-model-triage/` |
+| `frontend-rendering-triage` | structure built on an unobserved scenario | deleted; rebuild with `skillkit.py new` if the scenario appears |
+
+**Recovery.** Deleted content is never lost: `git log --diff-filter=D --name-only` finds it, and
+`git show <sha>^:<path>` prints it. The re-scoring commit is the one that introduced this section.

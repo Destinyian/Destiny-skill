@@ -4,134 +4,10 @@
   "notes": "Authored fields: domain, cluster, maturity, verified_on, triggers, related. Generated fields (description, body_lines, scripts, evidence_count) are overwritten by 'python tools/skillkit.py index --write'.",
   "skills": [
     {
-      "name": "chromium-crash-forensics",
-      "path": "chromium-crash-forensics",
+      "name": "grep-cannot-read-a-compressed-store",
+      "path": "grep-cannot-read-a-compressed-store",
       "domain": "browser",
-      "cluster": "investigation",
-      "role": "skill",
-      "platform": [
-        "windows"
-      ],
-      "requires": [
-        "python>=3.10"
-      ],
-      "maturity": "verified",
-      "verified_on": "2026-10-15",
-      "triggers": [
-        "Aw, Snap!",
-        "0xE0000008",
-        "renderer out of memory",
-        "browser restarted by itself",
-        "Crashpad minidump",
-        "exit_type",
-        "is it the browser or the extension"
-      ],
-      "related": [
-        "extracting-interaction-techniques",
-        "headless-cdp-toolkit",
-        "tampermonkey-store-forensics"
-      ],
-      "referenced_by": [
-        "headless-cdp-toolkit",
-        "tampermonkey-store-forensics"
-      ],
-      "evidence_refs": [
-        "journal/2026-10-15-session-self-review.md"
-      ],
-      "description": "Use when Chrome/Edge/Electron crashed, a tab died (\"Aw, Snap!\"), the whole browser restarted, or someone asks \"is it the browser or the extension?\". Reads Crashpad minidumps for the exception code (0xE0000008 = renderer out-of-memory), checks the profile exit_type, and classifies browser-vs-renderer-vs-extension crashes — including the fact that userscripts run *inside* the page renderer.",
-      "body_lines": 76,
-      "scripts": [
-        "scripts/scan_crash_dumps.py"
-      ],
-      "evidence_count": 0
-    },
-    {
-      "name": "extracting-interaction-techniques",
-      "path": "extracting-interaction-techniques",
-      "domain": "frontend",
-      "cluster": "rendering",
-      "role": "skill",
-      "platform": [
-        "any"
-      ],
-      "requires": [
-        "python>=3.10"
-      ],
-      "maturity": "verified",
-      "verified_on": "2026-10-15",
-      "triggers": [
-        "is this WebGL or an image",
-        "what library is this",
-        "why is this page heavy",
-        "what interaction techniques does this site use",
-        "audit downloaded artifacts",
-        "lazy chunk scan"
-      ],
-      "related": [
-        "frontend-interaction-engineering",
-        "headless-cdp-toolkit",
-        "immersive-webgl-scene-patterns",
-        "tampermonkey-store-forensics"
-      ],
-      "referenced_by": [
-        "chromium-crash-forensics",
-        "frontend-interaction-engineering",
-        "headless-cdp-toolkit",
-        "immersive-webgl-scene-patterns"
-      ],
-      "evidence_refs": [
-        "journal/2026-10-15-session-self-review.md"
-      ],
-      "description": "Use when you are handed a front-end page — a URL, a downloaded bundle, a screenshot, or \"make ours feel like this one\" — and need the interaction techniques behind it rather than a description. Produces a technique inventory (rendering path, gesture model, physics constants, state machine, timing, accessibility twins, cost) where every entry carries its evidence, its parameters and a code skeleton; pairs with headless-cdp-toolkit and frontend-interaction-engineering.",
-      "body_lines": 113,
-      "scripts": [
-        "scripts/audit_page_signals.py"
-      ],
-      "evidence_count": 1
-    },
-    {
-      "name": "frontend-interaction-engineering",
-      "path": "frontend-interaction-engineering",
-      "domain": "frontend",
-      "cluster": "rendering",
-      "role": "skill",
-      "platform": [
-        "any"
-      ],
-      "requires": [],
-      "maturity": "verified",
-      "verified_on": "2026-10-15",
-      "triggers": [
-        "make this feel right",
-        "drag-and-drop toy",
-        "physics pile",
-        "click does nothing after a drag",
-        "frame loop keeps running when idle",
-        "counters for feel",
-        "canvas interaction"
-      ],
-      "related": [
-        "extracting-interaction-techniques",
-        "immersive-webgl-scene-patterns"
-      ],
-      "referenced_by": [
-        "extracting-interaction-techniques",
-        "immersive-webgl-scene-patterns",
-        "precompute-the-rest-state"
-      ],
-      "evidence_refs": [
-        "journal/2026-10-15-session-self-review.md"
-      ],
-      "description": "Use when building or reviewing an interactive front-end component — canvas/WebGL scenes, drag-and-drop toys, physics piles, scroll or pointer effects, \"make this feel right\" tuning. Covers the rendering-path choice, gesture design and the click-vs-drag traps, physics patterns that read as natural (angle-of-repose piles, monotone restores, integer snapping), frame-loop hygiene, and how to verify feel objectively with counters and control experiments rather than screenshots.",
-      "body_lines": 224,
-      "scripts": [],
-      "evidence_count": 0
-    },
-    {
-      "name": "headless-cdp-toolkit",
-      "path": "headless-cdp-toolkit",
-      "domain": "browser",
-      "cluster": "investigation",
+      "cluster": "data-extraction",
       "role": "skill",
       "platform": [
         "windows",
@@ -139,42 +15,37 @@
         "linux"
       ],
       "requires": [
-        "node>=22"
+        "python>=3.10"
       ],
       "maturity": "verified",
       "verified_on": "2026-10-15",
       "triggers": [
-        "can you see this site",
-        "JS-only SPA",
-        "consent gate needs a click",
-        "screenshot across viewports",
-        "headless Chromium without npm",
-        "DevTools Protocol"
+        "userscript real source",
+        "Tampermonkey store",
+        "LevelDB Snappy",
+        "grep cannot find the userscript",
+        "recover userscripts after a profile move"
       ],
       "related": [
-        "chromium-crash-forensics",
-        "extracting-interaction-techniques"
+        "the-probe-lies",
+        "render-it-or-you-are-guessing"
       ],
       "referenced_by": [
-        "chromium-crash-forensics",
-        "extracting-interaction-techniques",
-        "immersive-webgl-scene-patterns",
-        "tampermonkey-store-forensics",
-        "windows-agent-sandbox-failures"
+        "the-probe-lies"
       ],
       "evidence_refs": [
         "journal/2026-10-15-session-self-review.md"
       ],
-      "description": "Use when a page must be rendered to be understood — JS-only SPAs, \"can you see this site?\", interstitial/consent gates that need a click, screenshot comparison across viewports, or verifying a component after a change. Drives headless Chromium over the DevTools Protocol with zero npm dependencies (Node 22+ has global fetch and WebSocket).",
-      "body_lines": 77,
+      "description": "Use when you need a userscript's real source, its stored settings, or to recover scripts after a profile move — and \"grep finds nothing\", \"strings shows garbage\", or the file looks empty. The idea: browser extension stores are Snappy-compressed LevelDB with double-encoded JSON values, so text tools cannot see anything; the data is there, it just needs a decoder rather than a search.",
+      "body_lines": 66,
       "scripts": [
-        "scripts/render-page.js"
+        "scripts/extract_tampermonkey_store.py"
       ],
       "evidence_count": 0
     },
     {
-      "name": "immersive-webgl-scene-patterns",
-      "path": "immersive-webgl-scene-patterns",
+      "name": "measure-the-rendering-path",
+      "path": "measure-the-rendering-path",
       "domain": "frontend",
       "cluster": "rendering",
       "role": "skill",
@@ -185,29 +56,52 @@
       "maturity": "verified",
       "verified_on": "2026-10-15",
       "triggers": [
-        "WebGL hero",
-        "black hole scene",
-        "particle field",
-        "shader landing page",
-        "static image fallback for WebGL",
-        "context loss",
-        "lazy scene pre-warm"
+        "which rendering approach is faster",
+        "the canvas is slow",
+        "sprite atlas or fillText",
+        "before choosing a renderer",
+        "premature rendering architecture"
       ],
       "related": [
-        "frontend-interaction-engineering",
-        "extracting-interaction-techniques",
-        "headless-cdp-toolkit"
+        "precompute-the-rest-state"
       ],
       "referenced_by": [
-        "extracting-interaction-techniques",
-        "frontend-interaction-engineering",
-        "precompute-the-rest-state"
+        "precompute-the-rest-state",
+        "the-shell-is-what-ships"
       ],
       "evidence_refs": [
         "journal/2026-10-15-session-self-review.md"
       ],
-      "description": "Use when building or reviewing an immersive hero/scene component — a WebGL black hole, particle field, shader-driven landing hero, or any \"wow\" interactive canvas. Covers the progressive-enhancement state machine, lazy scene loading with pre-warm, static-image fallback, pointer drag + keyboard parity, frame-rate-independent damping, frame-loop hygiene (delta clamp, visibility pause, context loss), DPR/responsive-FOV handling, and how to verify it headlessly.",
-      "body_lines": 253,
+      "description": "Use when choosing how to draw something — sprite atlas vs per-item text, canvas vs DOM, WebGL vs CSS — or when a canvas is slow and the plan is to \"optimize it later\". The idea: the rendering path is a measured decision, and the widely repeated advice is not always right (a pre-rendered atlas lost to plain fillText by 7.5x here); three lines of benchmark beat a day of architecture.",
+      "body_lines": 65,
+      "scripts": [],
+      "evidence_count": 0
+    },
+    {
+      "name": "one-press-one-action",
+      "path": "one-press-one-action",
+      "domain": "frontend",
+      "cluster": "interaction",
+      "role": "skill",
+      "platform": [
+        "any"
+      ],
+      "requires": [],
+      "maturity": "verified",
+      "verified_on": "2026-10-15",
+      "triggers": [
+        "click fires twice",
+        "the toggle undoes itself",
+        "pointerup and lostpointercapture",
+        "one press two actions"
+      ],
+      "related": [],
+      "referenced_by": [],
+      "evidence_refs": [
+        "journal/2026-10-15-session-self-review.md"
+      ],
+      "description": "Use when a single click or tap produces two effects — \"the toggle undoes itself\", \"click fires twice\", \"it collapses and instantly restores\" — or when a gesture handler is shared by several pointer events. The idea: one physical press emits several events (pointerup plus lostpointercapture, sometimes pointercancel), so routing them all to one handler without a state guard makes every press act twice.",
+      "body_lines": 70,
       "scripts": [],
       "evidence_count": 0
     },
@@ -232,29 +126,70 @@
         "stuck in collapsing"
       ],
       "related": [
-        "frontend-interaction-engineering",
-        "immersive-webgl-scene-patterns"
+        "measure-the-rendering-path",
+        "the-shell-is-what-ships"
       ],
-      "referenced_by": [],
+      "referenced_by": [
+        "measure-the-rendering-path"
+      ],
       "evidence_refs": [
         "journal/2026-10-15-session-self-review.md",
         "precompute-the-rest-state/EVIDENCE.md"
       ],
       "description": "Use when a system has to end in a canonical configuration after the user damages it — physics piles, layout animations, undo/restore, drag toys — and instead it \"never settles\", \"jitters forever\", \"particles shuffle after landing\", \"the restore bounces\", or a state machine is stuck in `collapsing`. The idea: compute the end state and animate toward it; never simulate your way into it.",
-      "body_lines": 83,
+      "body_lines": 81,
       "scripts": [],
       "evidence_count": 1
     },
     {
-      "name": "tampermonkey-store-forensics",
-      "path": "tampermonkey-store-forensics",
+      "name": "render-it-or-you-are-guessing",
+      "path": "render-it-or-you-are-guessing",
       "domain": "browser",
-      "cluster": "investigation",
+      "cluster": "observation",
       "role": "skill",
       "platform": [
-        "windows",
-        "macos",
-        "linux"
+        "any"
+      ],
+      "requires": [
+        "node>=22"
+      ],
+      "maturity": "verified",
+      "verified_on": "2026-10-15",
+      "triggers": [
+        "can you see this site",
+        "JS-only SPA",
+        "consent gate needs a click",
+        "screenshot across viewports",
+        "verify a change visually"
+      ],
+      "related": [
+        "the-entry-bundle-lies",
+        "the-probe-lies"
+      ],
+      "referenced_by": [
+        "grep-cannot-read-a-compressed-store",
+        "the-entry-bundle-lies",
+        "the-probe-lies",
+        "the-shell-is-what-ships"
+      ],
+      "evidence_refs": [
+        "journal/2026-10-15-session-self-review.md"
+      ],
+      "description": "Use when a page must be understood but cannot be read — JS-only SPAs, \"can you see this site?\", consent or interstitial gates that need a click, screenshots that must be compared across viewports, or a change that has to be verified visually. The idea: the DOM you can fetch is not the page the user sees, and the cheap tools lie in three specific ways — static fetch returns an empty shell, DOM dumping cannot click, and a screenshot taken on load fires before the page is ready.",
+      "body_lines": 67,
+      "scripts": [
+        "scripts/render-page.js"
+      ],
+      "evidence_count": 0
+    },
+    {
+      "name": "the-entry-bundle-lies",
+      "path": "the-entry-bundle-lies",
+      "domain": "frontend",
+      "cluster": "rendering",
+      "role": "skill",
+      "platform": [
+        "any"
       ],
       "requires": [
         "python>=3.10"
@@ -262,63 +197,101 @@
       "maturity": "verified",
       "verified_on": "2026-10-15",
       "triggers": [
-        "userscript real source",
-        "Tampermonkey store",
-        "LevelDB Snappy",
-        "grep cannot find the userscript",
-        "recover userscripts after a profile move",
-        "GM_setValue config"
+        "is this WebGL or an image",
+        "what is this site built with",
+        "why is this page heavy",
+        "what interaction techniques does this site use",
+        "the lazy chunk holds the renderer"
       ],
       "related": [
-        "chromium-crash-forensics",
-        "headless-cdp-toolkit"
+        "render-it-or-you-are-guessing",
+        "the-probe-lies"
       ],
       "referenced_by": [
-        "chromium-crash-forensics",
-        "extracting-interaction-techniques"
+        "render-it-or-you-are-guessing",
+        "the-probe-lies"
       ],
       "evidence_refs": [
         "journal/2026-10-15-session-self-review.md"
       ],
-      "description": "Use when you need the real source or settings of a userscript — to debug why it stops working, to review what it can access, or to recover scripts after a profile move. Tampermonkey keeps everything in a compressed LevelDB inside the browser profile, so grep/strings fail; this reads the LevelDB table format and Snappy by hand and extracts scripts, GM_setValue config and per-script metadata.",
-      "body_lines": 69,
+      "description": "Use when asked what a site is built with, why a page is heavy, or which interaction techniques it uses — before optimising, rewriting or copying it. The idea: the entry bundle is the least informative file in the project, because the interesting code is code-split into lazy chunks; an audit that stops at the entry file produces confidently wrong answers, and an extraction is finished only when someone could implement each finding.",
+      "body_lines": 71,
       "scripts": [
-        "scripts/extract_tampermonkey_store.py"
+        "scripts/audit_page_signals.py"
       ],
       "evidence_count": 0
     },
     {
-      "name": "windows-agent-sandbox-failures",
-      "path": "windows-agent-sandbox-failures",
-      "domain": "agent-ops",
-      "cluster": "environment",
+      "name": "the-probe-lies",
+      "path": "the-probe-lies",
+      "domain": "meta",
+      "cluster": "reasoning",
       "role": "skill",
       "platform": [
-        "windows"
+        "any"
       ],
       "requires": [],
-      "maturity": "field-tested",
+      "maturity": "verified",
       "verified_on": "2026-10-16",
       "triggers": [
-        "SEC_E_NO_CREDENTIALS",
-        "CIM access denied",
-        "EPERM piped stdio",
-        "UnicodeEncodeError gbk",
-        "spawn ENOENT",
-        "command moved to the background",
-        "SSL connection could not be established"
+        "no dump found",
+        "grep finds nothing",
+        "the config says otherwise",
+        "ENOENT for a file that exists",
+        "the check passed but it is still broken",
+        "nothing in the entry bundle"
       ],
       "related": [
-        "headless-cdp-toolkit"
+        "the-entry-bundle-lies",
+        "grep-cannot-read-a-compressed-store",
+        "render-it-or-you-are-guessing"
       ],
-      "referenced_by": [],
+      "referenced_by": [
+        "grep-cannot-read-a-compressed-store",
+        "render-it-or-you-are-guessing",
+        "the-entry-bundle-lies"
+      ],
       "evidence_refs": [
-        "windows-agent-sandbox-failures/EVIDENCE.md"
+        "journal/2026-10-15-session-self-review.md"
       ],
-      "description": "Use when commands fail for environment reasons rather than logic reasons inside a confined agent sandbox — schannel SEC_E_NO_CREDENTIALS or \"The SSL connection could not be established\", CIM/WMI access denied, EPERM when spawning a child with piped stdio, UnicodeEncodeError from a GBK console, a long command that gets backgrounded, or `spawn ENOENT` for an executable that demonstrably exists (a missing working directory, or a Microsoft Store app execution alias).",
-      "body_lines": 44,
+      "description": "Use when a check comes back negative but the symptom persists — \"no dump found\", \"grep finds nothing\", \"the config says otherwise\", \"ENOENT for a file that exists\", \"the test passed but it is still broken\" — and you are about to conclude the thing is not there. The idea: a negative probe is evidence about the probe, not about the world; find the probe that can be positive.",
+      "body_lines": 72,
       "scripts": [],
-      "evidence_count": 1
+      "evidence_count": 0
+    },
+    {
+      "name": "the-shell-is-what-ships",
+      "path": "the-shell-is-what-ships",
+      "domain": "frontend",
+      "cluster": "rendering",
+      "role": "skill",
+      "platform": [
+        "any"
+      ],
+      "requires": [],
+      "maturity": "verified",
+      "verified_on": "2026-10-15",
+      "triggers": [
+        "the shader is done but the page is not",
+        "WebGL hero fallback",
+        "context loss",
+        "loading state stuck",
+        "renders here but ships broken"
+      ],
+      "related": [
+        "render-it-or-you-are-guessing",
+        "measure-the-rendering-path"
+      ],
+      "referenced_by": [
+        "precompute-the-rest-state"
+      ],
+      "evidence_refs": [
+        "journal/2026-10-15-session-self-review.md"
+      ],
+      "description": "Use when building or reviewing an immersive hero, shader scene or full-bleed canvas — \"the shader is done but the page is not\", WebGL hero fallback, context loss, a loading state that never resolves, or a showcase that renders beautifully on the author's machine. The idea: the renderer is the demo and the shell is the product — state machine, fallback, frame-loop hygiene, input parity and responsive framing are what decide whether it ships.",
+      "body_lines": 76,
+      "scripts": [],
+      "evidence_count": 0
     }
   ]
 }

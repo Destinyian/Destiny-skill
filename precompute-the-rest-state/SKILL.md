@@ -76,8 +76,6 @@ glyph its slot is O(1) and is what brought the frame cost down.
 ```
 
 ## Related skills
-
-`frontend-interaction-engineering` (gesture disambiguation, click-vs-drag thresholds, and the
-measured rendering-path choice that keeps a pile this size inside the frame budget),
-`immersive-webgl-scene-patterns` (frame-loop hygiene — delta clamp, visibility pause, context loss —
-and the shell a scene like this still needs).
+`measure-the-rendering-path` (choosing the primitive that keeps a pile this size inside the frame
+budget), `the-shell-is-what-ships` (frame-loop hygiene — delta clamp, visibility pause, context loss —
+and the shell such a component still needs).
