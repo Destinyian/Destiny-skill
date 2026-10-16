@@ -32,7 +32,7 @@ Rules:
 ## Run the audit
 
 ```bash
-python site_motion_audit.py --dir ./site --out audit.md
+python scripts/audit_site_motion.py --dir ./site --out audit.md
 ```
 
 Reports: file inventory, framework/library evidence (React/Vue/Svelte/three/gsap/framer/lenis/
@@ -43,7 +43,7 @@ queries, `clamp()`), design tokens (`var(--x)` count + samples), media queries, 
 `prefers-reduced-motion` guard, production checks (hero `width/height` for CLS, preload,
 `fetchpriority`, `srcset`, `theme-color`, description, `og:image`), **lazy chunks to fetch**, and
 the app's own copy from the JS (a surprisingly good component inventory — that is how
-"拖动黑洞移动位置，也可使用方向键" surfaced the interaction model).
+`拖动黑洞移动位置，也可使用方向键` surfaced the interaction model).
 
 ## Reading the result
 

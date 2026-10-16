@@ -29,11 +29,11 @@ macOS `~/Library/Application Support/<vendor>`, Linux `~/.config/<vendor>`.
 | `0x80000003` | breakpoint (often an intentional crash) |
 
 Extraction is 12 lines of `struct`: MINIDUMP header → stream directory → stream type `6`
-(ExceptionStream) → `ExceptionCode` at `rva + 8`. `crash_scan.py` does it for every dump.
+(ExceptionStream) → `ExceptionCode` at `rva + 8`. `scripts/scan_crash_dumps.py` does it for every dump.
 
 ```bash
-python crash_scan.py                 # all detected browsers
-python crash_scan.py --dir "<User Data>" --json
+python scripts/scan_crash_dumps.py                 # all detected browsers
+python scripts/scan_crash_dumps.py --dir "<User Data>" --json
 ```
 
 ## The two hard-won insights

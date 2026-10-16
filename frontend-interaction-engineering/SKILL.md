@@ -1,6 +1,6 @@
 ---
 name: frontend-interaction-engineering
-description: Use when building or reviewing an interactive front-end component — canvas/WebGL scenes, drag-and-drop toys, physics piles, scroll or pointer effects, "make this feel right" tuning. Covers the rendering-path choice with measured numbers, gesture design and the click-vs-drag traps, physics patterns that read as natural (angle-of-repose piles, monotone restores, integer snapping), frame-loop hygiene, and how to verify feel objectively with counters and control experiments instead of eyeballing screenshots.
+description: Use when building or reviewing an interactive front-end component — canvas/WebGL scenes, drag-and-drop toys, physics piles, scroll or pointer effects, "make this feel right" tuning. Covers the rendering-path choice, gesture design and the click-vs-drag traps, physics patterns that read as natural (angle-of-repose piles, monotone restores, integer snapping), frame-loop hygiene, and how to verify feel objectively with counters and control experiments rather than screenshots.
 ---
 
 # Engineering interactive front-end components

@@ -9,3 +9,4 @@
 *.png  binary
 *.webp binary
 *.dmp  binary
+LICENSE text eol=lf

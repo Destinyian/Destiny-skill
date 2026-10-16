@@ -1,6 +1,6 @@
 ---
 name: immersive-webgl-scene-patterns
-description: Use when building or reviewing an immersive hero/scene component — a WebGL black hole, particle field, shader-driven landing hero, or any "wow" full-bleed interactive canvas. Covers the progressive-enhancement state machine, lazy scene loading with pre-warm, static-image fallback, pointer drag + keyboard parity, frame-rate-independent damping, frame-loop hygiene (delta clamp, visibility pause, context loss), DPR/responsive-FOV handling, and how to verify it headlessly. Distilled from a real production site (引力之旅 / Gravity Journey).
+description: Use when building or reviewing an immersive hero/scene component — a WebGL black hole, particle field, shader-driven landing hero, or any "wow" interactive canvas. Covers the progressive-enhancement state machine, lazy scene loading with pre-warm, static-image fallback, pointer drag + keyboard parity, frame-rate-independent damping, frame-loop hygiene (delta clamp, visibility pause, context loss), DPR/responsive-FOV handling, and how to verify it headlessly.
 ---
 
 # Immersive scene components that survive real devices
@@ -226,7 +226,7 @@ overrides) is pure CSS:
 ## Verification recipes (no GUI needed)
 
 1. **Multi-viewport proof** — headless render at 375×812, 768×1024, 1440×900 and compare
-   framing. See the `headless-cdp-toolkit` skill (`render.js --viewport …`).
+   framing. See the `headless-cdp-toolkit` skill (`scripts/render-page.js --viewport …`).
 2. **Force the fallback** — clear the flag that means "no WebGL" by launching with
    `--disable-gpu --disable-software-rasterizer`, or stub `HTMLCanvasElement.prototype.getContext`
    via CDP `Page.addScriptToEvaluateOnNewDocument`, then confirm the static image path looks right.

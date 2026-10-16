@@ -43,9 +43,9 @@ changing anything else — it turns a guessing game into a list.
 ## Use the script
 
 ```bash
-python model_trace.py                 # 1) manager DB  2) live config  3) per-thread models
-python model_trace.py --verify        # + query the provider's model list
-python model_trace.py --set-model "<providerId>=<model>"   # fix the stored TOML (backs up the DB)
+python scripts/trace_model_resolution.py                 # 1) manager DB  2) live config  3) per-thread models
+python scripts/trace_model_resolution.py --verify        # + query the provider's model list
+python scripts/trace_model_resolution.py --set-model "<providerId>=<model>"   # fix the stored TOML (backs up the DB)
 ```
 
 Secrets are never printed — the tool reports only whether a key is present.

@@ -13,15 +13,15 @@ Playwright/Puppeteer install.
 
 ```bash
 # one-shot render at several viewports
-node render.js --url https://example.com \
+node scripts/render-page.js --url https://example.com \
   --shot out.png --viewport 375x812 --viewport 1440x900 \
   --dom out.html --text out.txt --wait 4000
 
 # click through an interstitial first (repeats until the selector appears)
-node render.js --url https://example.com --click "#submitBtn" --shot after.png
+node scripts/render-page.js --url https://example.com --click "#submitBtn" --shot after.png
 ```
 
-`render.js` picks a browser automatically (`--browser <path>` to force), uses a throwaway
+`scripts/render-page.js` picks a browser automatically (`--browser <path>` to force), uses a throwaway
 `--user-data-dir` so your real profile is untouched, waits for `document.readyState`, then
 settles `--wait` ms. Exit code is non-zero if the page never became ready.
 
@@ -50,7 +50,7 @@ msedge --headless=new --disable-gpu --no-first-run --no-default-browser-check \
 
 - **Gate pages**: a button that only *navigates* (`location.href = …`) still needs a click —
   and countdown-disabled buttons need `el.disabled = false` first. CloudBase test domains
-  (`*.tcloudbaseapp.com`) show exactly this interstitial, sometimes with a "访问量已达上限"
+  (`*.tcloudbaseapp.com`) show exactly this interstitial, sometimes with a `访问量已达上限`
   quota notice that no click can bypass.
 - **Pick the right target**: `/json/list` may return several targets (sync dialogs, workers).
   Filter `type === "page"`.

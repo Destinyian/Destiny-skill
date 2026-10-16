@@ -18,7 +18,7 @@ are JSON stringified twice.
 | macOS / Linux | same `<Profile>/Local Extension Settings/<ext id>` under the vendor's User Data dir |
 
 Note the browser may be running: reads are safe (`.ldb` files are immutable; newest writes
-sit in `*.log`). `crash_scan.py`-style snapshots of mtimes also tell you whether the scripts
+sit in `*.log`). `scripts/scan_crash_dumps.py`-style snapshots of mtimes also tell you whether the scripts
 are still executing at all — useful when "it stopped" vs "it crashed" is the question.
 
 ## Record layout
@@ -35,7 +35,7 @@ are still executing at all — useful when "it stopped" vs "it crashed" is the q
 
 1. **Naive decode "works" then produces garbage.** UTF-8 decoding a raw `.ldb` yields long
    readable runs interrupted by replacement chars — those are Snappy tag bytes, not corruption.
-   You must actually decompress (`crash`-free 60-line raw Snappy decoder in `tm_extract.py`).
+   You must actually decompress (`crash`-free 60-line raw Snappy decoder in `scripts/extract_tampermonkey_store.py`).
 2. **Values are encoded more than once.** `@source` often needs `json.loads` twice; `.get("value")`
    can be a string, a dict, or a JSON string containing a dict. Unwrap in a loop until stable
    (see `unescape_deep`).
@@ -47,9 +47,9 @@ bodies to the console.
 ## Use it
 
 ```bash
-python tm_extract.py --list                       # keys + sizes, no files written
-python tm_extract.py --browser edge --out ./tm-out
-python tm_extract.py --store "<dir>" --out ./tm-out
+python scripts/extract_tampermonkey_store.py --list                       # keys + sizes, no files written
+python scripts/extract_tampermonkey_store.py --browser edge --out ./tm-out
+python scripts/extract_tampermonkey_store.py --store "<dir>" --out ./tm-out
 ```
 
 Outputs `tm-out/scripts/<name>__<version>.user.js` plus `scripts-index.json`
