@@ -13,7 +13,10 @@ Each directory is one skill:
 ```
 <skill-name>/
 ├── SKILL.md      # YAML frontmatter (name, description) + when to use, how, gotchas
-└── *.py / *.js   # optional tools — Python 3.10+ stdlib only, or Node 22+ with zero npm deps
+├── EVIDENCE.md   # append-only log of real sessions that used it — drives the next revision
+├── scripts/      # optional tools — Python 3.10+ stdlib only, or Node 22+ with zero npm deps
+├── references/   # optional heavy reference material kept out of SKILL.md
+└── examples/     # optional minimal runnable examples
 ```
 
 `description` is written for **discovery**: it lists the symptoms and phrasings that should
@@ -24,7 +27,7 @@ Compatible with Claude Code, Codex, Cursor and DSH skill layouts — install by 
 directory to the agent's skills folder:
 
 ```bash
-cp -r <skill-name> ~/.claude/skills/     # or ~/.codex/skills/
+cp -r <skill-name> ~/.claude/skills/     # or ~/.codex/skills/ or ~/.agents/skills/
 ```
 
 ## The collection
@@ -37,8 +40,27 @@ cp -r <skill-name> ~/.claude/skills/     # or ~/.codex/skills/
 | [frontend-motion-audit](frontend-motion-audit/) | "is this WebGL or an image?", "what is this site built with?", before optimizing | heavy rendering hides in **lazy chunks** (`import("./scene-*.js")`) — scanning only the entry bundle produces confidently wrong answers |
 | [immersive-webgl-scene-patterns](immersive-webgl-scene-patterns/) | building/reviewing a WebGL hero, shader scene, particle field | the shell around the renderer is what ships: loading/ready/fallback state machine, pre-warmed lazy scene, keyboard parity, `1-exp(-k·dt)` damping, context-loss fallback, responsive FOV |
 | [codex-relay-model-triage](codex-relay-model-triage/) | "Model X is not available for this group", 404/403 from a relay | the model is pinned in **three** places — the provider manager's DB (which rewrites your config), the live config, and **per-conversation** (`threads.model`) — which is why "I changed it and nothing happened" |
-| [dsh-sandbox-workarounds](dsh-sandbox-workarounds/) | commands fail for *environment* reasons inside a sandbox | symptom → fix table: `SEC_E_NO_CREDENTIALS` → do TLS in Node; CIM denied → `Get-Process`; `EPERM` on piped stdio → `stdio:'ignore'` + CDP; GBK `UnicodeEncodeError` → write UTF-8 files |
+| [dsh-sandbox-workarounds](dsh-sandbox-workarounds/) | commands fail for *environment* reasons inside a sandbox | symptom → fix table: `SEC_E_NO_CREDENTIALS` → do TLS in Node; CIM denied → `Get-Process`; `EPERM` on piped stdio → `stdio:'ignore'` + CDP; GBK `UnicodeEncodeError` → write UTF-8 files; `spawn ENOENT` for an executable that exists → a **missing working directory**, not a missing binary |
 | [frontend-interaction-engineering](frontend-interaction-engineering/) | building or reviewing anything interactive — canvas scenes, drag toys, physics piles, "make it feel right" tuning | the rendering-path choice is a **measured** decision (fillText beat a sprite atlas 7.5×); a 6px drag threshold silently swallows real clicks; angle-of-repose piles must not shuffle after landing; monotone restores never bounce — and every one of those claims has a counter + a control experiment |
+
+## Index
+
+Generated from `skills.json`. Do not edit by hand — run `python tools/skillkit.py index --write`.
+
+<!-- SKILLS:START -->
+
+| Skill | Domain / cluster | Maturity | Verified | Scripts | Evidence |
+|---|---|---|---|---|---|
+| [codex-relay-model-triage](codex-relay-model-triage/) | agent-ops / relay-config | verified | 2026-10-15 | `scripts/trace_model_resolution.py` | 0 |
+| [dsh-sandbox-workarounds](dsh-sandbox-workarounds/) | agent-ops / sandbox-env | field-tested | 2026-10-16 | — | 1 |
+| [chromium-crash-forensics](chromium-crash-forensics/) | browser / crash-forensics | verified | 2026-10-15 | `scripts/scan_crash_dumps.py` | 0 |
+| [tampermonkey-store-forensics](tampermonkey-store-forensics/) | browser / extension-forensics | verified | 2026-10-15 | `scripts/extract_tampermonkey_store.py` | 0 |
+| [headless-cdp-toolkit](headless-cdp-toolkit/) | browser / render-verify | verified | 2026-10-15 | `scripts/render-page.js` | 0 |
+| [frontend-motion-audit](frontend-motion-audit/) | frontend / artifact-audit | verified | 2026-10-15 | `scripts/audit_site_motion.py` | 0 |
+| [frontend-interaction-engineering](frontend-interaction-engineering/) | frontend / interaction-craft | verified | 2026-10-15 | — | 0 |
+| [immersive-webgl-scene-patterns](immersive-webgl-scene-patterns/) | frontend / scene-building | verified | 2026-10-15 | — | 0 |
+
+<!-- SKILLS:END -->
 
 ## Design rules used here
 
@@ -52,6 +74,23 @@ cp -r <skill-name> ~/.claude/skills/     # or ~/.codex/skills/
 5. **Secrets stay out.** Tools report *whether* a token exists, never its value; outputs that
    may contain tokens carry an explicit warning.
 
+## Working on this repo
+
+| File | What it is |
+|---|---|
+| [CONVENTIONS.md](CONVENTIONS.md) | layout, naming, frontmatter, commit format, taxonomy, maturity ladder |
+| [EVOLUTION.md](EVOLUTION.md) | the capture → attribute → rewrite → verify → consolidate loop |
+| [skills.json](skills.json) | machine-readable index: domain, cluster, triggers, maturity, evidence count |
+| [tools/skillkit.py](tools/skillkit.py) | `check` · `index` · `cluster` · `new` · `evidence` (Python 3.10+, stdlib only) |
+
+```bash
+python tools/skillkit.py check      # validate the whole library (exit 1 on any error)
+python tools/skillkit.py cluster    # domains, clusters, overlap, maintenance report
+python tools/skillkit.py new <name> # scaffold a new skill
+```
+
+Rule of thumb: **one commit touches one skill**, and no rewrite without evidence.
+
 ## Provenance
 
 Extracted and generalised from Windows/Edge debugging sessions involving Tampermonkey,
@@ -61,8 +100,8 @@ paths were removed; the findings and constants were kept.
 
 ## Session self-review
 
-[SELF-REVIEW-2026-10-15.md](SELF-REVIEW-2026-10-15.md) — the bug log (9 defects, only 1 found by the user), the counters and control experiments that caught them, and the environment lessons.
+[journal/2026-10-15-session-self-review.md](journal/2026-10-15-session-self-review.md) — the bug log (9 defects, only 1 found by the user), the counters and control experiments that caught them, and the environment lessons.
 
 ## License
 
-Not chosen yet — add one before relying on this commercially.
+[MIT](LICENSE).

@@ -1,0 +1,243 @@
+{
+  "version": 1,
+  "generated_by": "tools/skillkit.py index --write",
+  "notes": "Authored fields: domain, cluster, maturity, verified_on, triggers, related. Generated fields (description, body_lines, scripts, evidence_count) are overwritten by 'python tools/skillkit.py index --write'.",
+  "skills": [
+    {
+      "name": "chromium-crash-forensics",
+      "path": "chromium-crash-forensics",
+      "domain": "browser",
+      "cluster": "crash-forensics",
+      "maturity": "verified",
+      "verified_on": "2026-10-15",
+      "triggers": [
+        "Aw, Snap!",
+        "0xE0000008",
+        "renderer out of memory",
+        "browser restarted by itself",
+        "Crashpad minidump",
+        "exit_type",
+        "is it the browser or the extension"
+      ],
+      "related": [
+        "tampermonkey-store-forensics",
+        "headless-cdp-toolkit"
+      ],
+      "referenced_by": [],
+      "evidence_refs": [
+        "journal/2026-10-15-session-self-review.md"
+      ],
+      "description": "Use when Chrome/Edge/Electron crashed, a tab died (\"Aw, Snap!\"), the whole browser restarted, or someone asks \"is it the browser or the extension?\". Reads Crashpad minidumps for the exception code (0xE0000008 = renderer out-of-memory), checks the profile exit_type, and classifies browser-vs-renderer-vs-extension crashes — including the fact that userscripts run *inside* the page renderer.",
+      "body_lines": 76,
+      "scripts": [
+        "scripts/scan_crash_dumps.py"
+      ],
+      "evidence_count": 0
+    },
+    {
+      "name": "codex-relay-model-triage",
+      "path": "codex-relay-model-triage",
+      "domain": "agent-ops",
+      "cluster": "relay-config",
+      "maturity": "verified",
+      "verified_on": "2026-10-15",
+      "triggers": [
+        "Model X is not available for this group",
+        "404 on /responses",
+        "Insufficient account balance",
+        "changed the model but it still fails",
+        "provider manager rewrites the config",
+        "per-conversation model"
+      ],
+      "related": [
+        "dsh-sandbox-workarounds"
+      ],
+      "referenced_by": [],
+      "evidence_refs": [
+        "journal/2026-10-15-session-self-review.md"
+      ],
+      "description": "Use when an OpenAI-compatible relay/proxy answers \"Model X is not available for this group\", 404 on /responses, or 403 \"Insufficient account balance\" — or when someone says \"I changed the model but it still fails\". Traces the effective model through the provider manager DB, the live client config and the per-conversation model, then verifies which model names the account's group actually offers.",
+      "body_lines": 76,
+      "scripts": [
+        "scripts/trace_model_resolution.py"
+      ],
+      "evidence_count": 0
+    },
+    {
+      "name": "dsh-sandbox-workarounds",
+      "path": "dsh-sandbox-workarounds",
+      "domain": "agent-ops",
+      "cluster": "sandbox-env",
+      "maturity": "field-tested",
+      "verified_on": "2026-10-16",
+      "triggers": [
+        "SEC_E_NO_CREDENTIALS",
+        "CIM access denied",
+        "EPERM piped stdio",
+        "UnicodeEncodeError gbk",
+        "spawn ENOENT",
+        "command moved to the background",
+        "SSL connection could not be established"
+      ],
+      "related": [
+        "codex-relay-model-triage",
+        "headless-cdp-toolkit"
+      ],
+      "referenced_by": [],
+      "evidence_refs": [
+        "dsh-sandbox-workarounds/EVIDENCE.md"
+      ],
+      "description": "Use when commands fail for environment reasons rather than logic reasons inside a confined agent sandbox — schannel SEC_E_NO_CREDENTIALS or \"The SSL connection could not be established\", CIM/WMI access denied, EPERM when spawning a child with piped stdio, UnicodeEncodeError from a GBK console, a long command that gets backgrounded, or `spawn ENOENT` for an executable that demonstrably exists (a missing working directory, or a Microsoft Store app execution alias).",
+      "body_lines": 44,
+      "scripts": [],
+      "evidence_count": 1
+    },
+    {
+      "name": "frontend-interaction-engineering",
+      "path": "frontend-interaction-engineering",
+      "domain": "frontend",
+      "cluster": "interaction-craft",
+      "maturity": "verified",
+      "verified_on": "2026-10-15",
+      "triggers": [
+        "make this feel right",
+        "drag-and-drop toy",
+        "physics pile",
+        "click does nothing after a drag",
+        "frame loop keeps running when idle",
+        "counters for feel",
+        "canvas interaction"
+      ],
+      "related": [
+        "immersive-webgl-scene-patterns",
+        "frontend-motion-audit"
+      ],
+      "referenced_by": [],
+      "evidence_refs": [
+        "journal/2026-10-15-session-self-review.md"
+      ],
+      "description": "Use when building or reviewing an interactive front-end component — canvas/WebGL scenes, drag-and-drop toys, physics piles, scroll or pointer effects, \"make this feel right\" tuning. Covers the rendering-path choice, gesture design and the click-vs-drag traps, physics patterns that read as natural (angle-of-repose piles, monotone restores, integer snapping), frame-loop hygiene, and how to verify feel objectively with counters and control experiments rather than screenshots.",
+      "body_lines": 216,
+      "scripts": [],
+      "evidence_count": 0
+    },
+    {
+      "name": "frontend-motion-audit",
+      "path": "frontend-motion-audit",
+      "domain": "frontend",
+      "cluster": "artifact-audit",
+      "maturity": "verified",
+      "verified_on": "2026-10-15",
+      "triggers": [
+        "is this WebGL or an image",
+        "what library is this",
+        "why is this page heavy",
+        "what interaction techniques does this site use",
+        "audit downloaded artifacts",
+        "lazy chunk scan"
+      ],
+      "related": [
+        "immersive-webgl-scene-patterns",
+        "headless-cdp-toolkit"
+      ],
+      "referenced_by": [],
+      "evidence_refs": [
+        "journal/2026-10-15-session-self-review.md"
+      ],
+      "description": "Use before rewriting, optimizing or judging a deployed front-end — \"is this WebGL or just an image?\", \"what library is this?\", \"why is this page heavy?\", \"what interaction techniques does this site use?\". Audits already-downloaded artifacts offline: framework/library detection, real-time rendering vs static art, motion techniques, design tokens, responsive strategy, lazy chunks, and missing production concerns (reduced motion, CLS, social card).",
+      "body_lines": 62,
+      "scripts": [
+        "scripts/audit_site_motion.py"
+      ],
+      "evidence_count": 0
+    },
+    {
+      "name": "headless-cdp-toolkit",
+      "path": "headless-cdp-toolkit",
+      "domain": "browser",
+      "cluster": "render-verify",
+      "maturity": "verified",
+      "verified_on": "2026-10-15",
+      "triggers": [
+        "can you see this site",
+        "JS-only SPA",
+        "consent gate needs a click",
+        "screenshot across viewports",
+        "headless Chromium without npm",
+        "DevTools Protocol"
+      ],
+      "related": [
+        "chromium-crash-forensics",
+        "frontend-motion-audit"
+      ],
+      "referenced_by": [],
+      "evidence_refs": [
+        "journal/2026-10-15-session-self-review.md"
+      ],
+      "description": "Use when a page must be rendered to be understood — JS-only SPAs, \"can you see this site?\", interstitial/consent gates that need a click, screenshot comparison across viewports, or verifying a component after a change. Drives headless Chromium over the DevTools Protocol with zero npm dependencies (Node 22+ has global fetch and WebSocket).",
+      "body_lines": 77,
+      "scripts": [
+        "scripts/render-page.js"
+      ],
+      "evidence_count": 0
+    },
+    {
+      "name": "immersive-webgl-scene-patterns",
+      "path": "immersive-webgl-scene-patterns",
+      "domain": "frontend",
+      "cluster": "scene-building",
+      "maturity": "verified",
+      "verified_on": "2026-10-15",
+      "triggers": [
+        "WebGL hero",
+        "black hole scene",
+        "particle field",
+        "shader landing page",
+        "static image fallback for WebGL",
+        "context loss",
+        "lazy scene pre-warm"
+      ],
+      "related": [
+        "frontend-interaction-engineering",
+        "frontend-motion-audit"
+      ],
+      "referenced_by": [],
+      "evidence_refs": [
+        "journal/2026-10-15-session-self-review.md"
+      ],
+      "description": "Use when building or reviewing an immersive hero/scene component — a WebGL black hole, particle field, shader-driven landing hero, or any \"wow\" interactive canvas. Covers the progressive-enhancement state machine, lazy scene loading with pre-warm, static-image fallback, pointer drag + keyboard parity, frame-rate-independent damping, frame-loop hygiene (delta clamp, visibility pause, context loss), DPR/responsive-FOV handling, and how to verify it headlessly.",
+      "body_lines": 246,
+      "scripts": [],
+      "evidence_count": 0
+    },
+    {
+      "name": "tampermonkey-store-forensics",
+      "path": "tampermonkey-store-forensics",
+      "domain": "browser",
+      "cluster": "extension-forensics",
+      "maturity": "verified",
+      "verified_on": "2026-10-15",
+      "triggers": [
+        "userscript real source",
+        "Tampermonkey store",
+        "LevelDB Snappy",
+        "grep cannot find the userscript",
+        "recover userscripts after a profile move",
+        "GM_setValue config"
+      ],
+      "related": [
+        "chromium-crash-forensics"
+      ],
+      "referenced_by": [],
+      "evidence_refs": [
+        "journal/2026-10-15-session-self-review.md"
+      ],
+      "description": "Use when you need the real source or settings of a userscript — to debug why it stops working, to review what it can access, or to recover scripts after a profile move. Tampermonkey keeps everything in a compressed LevelDB inside the browser profile, so grep/strings fail; this reads the LevelDB table format and Snappy by hand and extracts scripts, GM_setValue config and per-script metadata.",
+      "body_lines": 69,
+      "scripts": [
+        "scripts/extract_tampermonkey_store.py"
+      ],
+      "evidence_count": 0
+    }
+  ]
+}
