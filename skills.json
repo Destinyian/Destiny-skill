@@ -8,6 +8,7 @@
       "path": "grep-cannot-read-a-compressed-store",
       "domain": "browser",
       "cluster": "data-extraction",
+      "kind": "extraction",
       "role": "skill",
       "platform": [
         "windows",
@@ -48,6 +49,7 @@
       "path": "measure-the-rendering-path",
       "domain": "frontend",
       "cluster": "rendering",
+      "kind": "authoring",
       "role": "skill",
       "platform": [
         "any"
@@ -82,6 +84,7 @@
       "path": "one-press-one-action",
       "domain": "frontend",
       "cluster": "interaction",
+      "kind": "authoring",
       "role": "skill",
       "platform": [
         "any"
@@ -110,6 +113,7 @@
       "path": "precompute-the-rest-state",
       "domain": "frontend",
       "cluster": "rendering",
+      "kind": "authoring",
       "role": "skill",
       "platform": [
         "any"
@@ -146,6 +150,7 @@
       "path": "render-it-or-you-are-guessing",
       "domain": "browser",
       "cluster": "observation",
+      "kind": "instrument",
       "role": "skill",
       "platform": [
         "any"
@@ -187,6 +192,7 @@
       "path": "the-entry-bundle-lies",
       "domain": "frontend",
       "cluster": "rendering",
+      "kind": "extraction",
       "role": "skill",
       "platform": [
         "any"
@@ -226,6 +232,7 @@
       "path": "the-probe-lies",
       "domain": "meta",
       "cluster": "reasoning",
+      "kind": "reasoning",
       "role": "skill",
       "platform": [
         "any"
@@ -264,6 +271,7 @@
       "path": "the-shell-is-what-ships",
       "domain": "frontend",
       "cluster": "rendering",
+      "kind": "authoring",
       "role": "skill",
       "platform": [
         "any"

@@ -66,6 +66,8 @@ DESCRIPTION_OPENING_RE = re.compile(r"^use (?:when|before|after|while|if|during)
 # The seven fields of an idea card (CONVENTIONS.md section 11). A card missing any of them is not
 # finished, so the check is an error rather than a warning: an unfinished card is what turns the
 # catalogue back into a pile of notes.
+IDEA_KINDS = {"reasoning", "extraction", "instrument", "authoring"}
+
 IDEA_FIELDS = [
     ("the claim", r"\*\*The idea\.\*\*"),
     ("provenance", r"\*\*Where it came from\.\*\*"),
@@ -333,6 +335,13 @@ def validate(skills: list[Skill], index: dict) -> list[tuple[str, str, str, str]
             err("E09", s.dir_name, "missing from skills.json (run: skillkit.py index --write)")
             continue
 
+        # E18 the kind decides how a card is graded, so it must be declared and defensible
+        kind = entry.get("kind")
+        if kind not in IDEA_KINDS:
+            err("E18", s.dir_name, f"kind '{kind}' is not one of {sorted(IDEA_KINDS)}")
+        elif kind == "instrument" and not s.scripts:
+            err("E18", s.dir_name, "kind 'instrument' but the card ships no script")
+
         # W03 zombie: no evidence of its own and no journal reference either
         if s.evidence_count == 0 and not entry.get("evidence_refs"):
             warn("W03", s.dir_name, "no evidence entries and no evidence_refs - is this skill alive?")
@@ -426,6 +435,7 @@ def computed_entry(s: Skill, previous: dict | None) -> dict:
         "path": s.dir_name,
         "domain": prev.get("domain", "unclassified"),
         "cluster": prev.get("cluster", "unclassified"),
+        "kind": prev.get("kind"),
         "role": prev.get("role", "skill"),
         "platform": prev.get("platform", ["any"]),
         "requires": prev.get("requires", []),

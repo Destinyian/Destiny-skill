@@ -42,8 +42,8 @@ only in a skill that predates this rule and has not been migrated; new skills us
 
 | Thing | Rule | Example |
 |---|---|---|
-| skill directory | kebab-case, `<domain>-<activity>`, ≤64 chars, must equal frontmatter `name` | `chromium-crash-forensics` |
-| Python script | `snake_case.py`, **verb first** | `scan_crash_dumps.py` |
+| skill directory | kebab-case, a claim phrased as a name, ≤64 chars, must equal frontmatter `name` | `the-probe-lies`, `precompute-the-rest-state` |
+| Python script | `snake_case.py`, **verb first** | `audit_page_signals.py` |
 | JavaScript script | `kebab-case.js`, verb first | `render-page.js` |
 | evidence / journal | `YYYY-MM-DD-<topic>.md` | `2026-10-15-session-self-review.md` |
 
@@ -56,13 +56,13 @@ Only two fields, for maximum cross-tool compatibility (Claude Code, Codex, Curso
 
 ```yaml
 ---
-name: chromium-crash-forensics
+name: the-probe-lies
 description: Use when ... # <= 500 chars, third person, triggering conditions ONLY
 ---
 ```
 
 * `description` **must open with** `Use when` — or `Use before` / `Use after` / `Use while` when the
-  trigger is temporal (`extracting-interaction-techniques` opens with "Use before rewriting…"). It describes
+  trigger is temporal. All eight cards currently open with `Use when`. It describes
   **when to load the skill**, never how it works. A description that summarises the workflow becomes
   a shortcut the agent follows instead of reading the body.
 * Keywords first: exact error strings (`0xE0000008`, `SEC_E_NO_CREDENTIALS`), symptoms
@@ -122,16 +122,20 @@ hub could disambiguate. Sized for that job — a cluster of one is a symptom tha
 over-split, a cluster of eight needs a split.
 
 ```
-domain      cluster          skill
-browser     investigation    chromium-crash-forensics
-                             tampermonkey-store-forensics
-                             headless-cdp-toolkit
-frontend    rendering        extracting-interaction-techniques
-                             immersive-webgl-scene-patterns
-                             frontend-interaction-engineering
-agent-ops   environment      windows-agent-sandbox-failures
-                             codex-relay-model-triage
+domain      cluster          kind         card
+browser     data-extraction  extraction   grep-cannot-read-a-compressed-store
+            observation      instrument   render-it-or-you-are-guessing
+frontend    interaction      authoring    one-press-one-action
+            rendering        extraction   the-entry-bundle-lies
+                             authoring    the-shell-is-what-ships
+                             authoring    measure-the-rendering-path
+                             authoring    precompute-the-rest-state
+meta        reasoning        reasoning    the-probe-lies
 ```
+
+`kind` is a field in `skills.json`, not a note: E18 rejects an unknown kind and rejects an
+`instrument` that ships no script. A card has exactly one kind — the one that decides how it is
+graded.
 
 * **Cluster of 3–7 skills → add a hub skill** (a router): its body is a decision table plus links,
   under 60 lines, and its `description` is written to win when the user has not yet narrowed down
@@ -182,6 +186,7 @@ agent-ops   environment      windows-agent-sandbox-failures
 | E12 | error | no trigger phrase is claimed by two skills |
 | E13 | error | a script must not tell the reader to run a file that exists nowhere — `python old_name.py` after a rename is the canonical case |
 | E17 | error | an idea card carries all seven fields (claim, provenance, recall triggers, how to apply, boundaries, evidence, verify) — a card missing one is unfinished |
+| E18 | error | `kind` is one of `reasoning` / `extraction` / `instrument` / `authoring`, and an `instrument` ships a script |
 | W01–W07 | warn | CJK in a body, description token overlap, body near 500 lines, fewer than 3 triggers, first-person description, cross-skill file reference, no evidence at all |
 
 `referenced_by` is **generated** (the inverse of `related`); `index --write` maintains it, so never
