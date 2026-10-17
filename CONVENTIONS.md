@@ -4,6 +4,27 @@ How this skill library is laid out, named, committed and evolved.
 Everything enforceable is enforced by `python tools/skillkit.py check` — if a rule is not in that
 script, treat it as a guideline, not a law.
 
+## 0. In one page
+
+- **The unit is one idea.** One directory = one idea from one real project, with seven fields:
+  claim, provenance, recall triggers, how to apply, boundaries, evidence, verify. Missing any → the
+  card is unfinished (E17).
+- **Names.** Directory = frontmatter `name` = kebab-case claim. Scripts are `snake_case.py` or
+  `kebab-case.js`, verb first (E01/E02/E06).
+- **Frontmatter is two fields.** `name` and `description`; the description opens with `Use when`,
+  stays under 500 characters, lists symptoms only, never the workflow (E03).
+- **Body** ≤ 500 lines, and every non-obvious claim carries evidence with the environment that
+  produced it (E04/E07).
+- **Flat namespace.** `<card>/SKILL.md`, `EVIDENCE.md`, `scripts/` — plus `references/`,
+  `examples/`, `assets/` only when needed (E05). Never nested.
+- **`skills.json` is generated** by `index --write` and must stay in sync; `related` and
+  `referenced_by` must agree in both directions (E09/E14/E15).
+- **Commits** are Conventional Commits with a required scope (the card, or `repo`), one card per
+  commit, and a `Verified:` trailer on `feat`/`fix` (E08 keeps secrets out).
+- **Maturity** is earned: `draft` → `verified` (`verified_on`) → `field-tested` (an evidence entry)
+  → `routed` (linked by another card).
+- **No gate, no rule.** `check` must exit 0. Every gate here was proven by making it fail once.
+
 ## 1. Repository layout
 
 ```
@@ -11,11 +32,12 @@ README.md            human index (hand-written prose + generated table between S
 CONVENTIONS.md       this file
 EVOLUTION.md         the evidence -> rewrite -> verify loop
 LICENSE              MIT
-skills.json          machine-readable index: domain, cluster, triggers, maturity, evidence count
-templates/skill/     scaffold used by `skillkit.py new`
+skills.json          machine-readable index: domain, cluster, kind, triggers, maturity, evidence
+templates/idea/      scaffold used by `skillkit.py new`
 tools/skillkit.py    the only tool: check / index / cluster / new / evidence
 journal/             session write-ups, one file per session: YYYY-MM-DD-<topic>.md
-<skill-name>/        one directory per skill (flat namespace, never nested)
+notes/               knowledge that is true but out of mission (not a card, not installed)
+<card-name>/         one directory per card (flat namespace, never nested)
 ```
 
 Skills live in a **flat namespace**: `~/.claude/skills/<name>` or `~/.agents/skills/<name>` is how
@@ -35,8 +57,8 @@ expressed in `skills.json` (`domain` / `cluster`), never by directory nesting.
   assets/         images and other binaries
 ```
 
-Nothing else may sit at the skill root — `check` rejects it (E05). One script may live at the root
-only in a skill that predates this rule and has not been migrated; new skills use `scripts/`.
+Nothing else may sit at the card root — `check` rejects it (E05). Every script lives in `scripts/`;
+an instrument that only one card needs belongs to that card.
 
 ## 3. Names
 
@@ -226,16 +248,14 @@ and `skillkit.py new` scaffolds a card that already satisfies the gate. The gate
 removing the boundaries section from a card and confirming the check goes red — a gate that cannot
 fail proves nothing.
 
-**A skill is a procedure over an artifact**: it names what it consumes, the checklist that turns that
-into findings, and the output a reader can act on. Narrative alone is a journal entry; a topic
-description alone is a reference page.
+The **kind** says how the card is graded, and there is exactly one per card:
 
 | Kind | Consumes | Produces | In this library |
 |---|---|---|---|
 | **Extraction** | a page, a bundle, a browser store, a sample | findings that carry evidence, parameters and a code skeleton | `the-entry-bundle-lies`, `grep-cannot-read-a-compressed-store` |
 | **Instrument** | a URL or a live process | observations the other kinds consume | `render-it-or-you-are-guessing` (ships `render-page.js`) |
-| **Authoring** | a design intent | code with measured defaults and their counter-examples | `the-shell-is-what-ships`, `measure-the-rendering-path`, `one-press-one-action` |
-| **Reasoning** | a negative or misleading result | the rule that replaces it | `the-probe-lies`, `precompute-the-rest-state` |
+| **Authoring** | a design intent | code with measured defaults and their counter-examples | `the-shell-is-what-ships`, `measure-the-rendering-path`, `one-press-one-action`, `precompute-the-rest-state` |
+| **Reasoning** | a negative or misleading result | the rule that replaces it | `the-probe-lies` |
 
 **Extraction skills are graded on their output, not on their knowledge.** Every entry carries
 evidence (a file:line or an observed event), parameters tagged `measured | estimated`, and a
