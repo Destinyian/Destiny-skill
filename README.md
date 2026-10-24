@@ -109,6 +109,7 @@ site?"), so an agent can match it without reading the body. Two skills name a si
 | [the-entry-bundle-lies](the-entry-bundle-lies/) | "what is this site built with?", "why is this page heavy?", before optimising or copying it | the entry bundle is the least informative file: a 222 KB entry had no `canvas` while the renderer sat in a 552 KB lazy chunk. Extract to implementable blocks, never to prose |
 | [grep-cannot-read-a-compressed-store](grep-cannot-read-a-compressed-store/) | you need a userscript's real source, its settings, or recovery after a profile move | the store is Snappy-compressed LevelDB with double-encoded JSON — text tools see nothing. A 41-line decoder plus a table walk reads both `.ldb` and `.log` |
 | [the-halo-remembers-the-cursor](the-halo-remembers-the-cursor/) | a cursor effect feels dead — a glow that sits on the pointer like a flashlight, or a page that only wakes when you move | the halo is a velocity field with memory: after a fast swipe the frame still holds the whole path, then it decays in about 0.6 s. The CSS glow is the cheap version, shipped as the control |
+| [mvcreate](mvcreate/) | a song section or a mood has to become an 8-second, phone-first clip drawn entirely in code — pixel art, CRT, picture book, low-poly 3D | the look is a constraint set, not an adjective: internal grid, palette cap, pose rate, `avoid` list and a five-frame contact sheet. The prompt is a spec with a test; `scripts/audit_frames.py` checks grid, palette and loop seam before encoding |
 
 ## Notes
 
@@ -136,6 +137,7 @@ Generated from `skills.json`. Do not edit by hand — run `python tools/skillkit
 | [the-entry-bundle-lies](the-entry-bundle-lies/) | frontend / rendering | any | python>=3.10 | verified | 2026-10-15 | `scripts/audit_page_signals.py` | 0 |
 | [the-shell-is-what-ships](the-shell-is-what-ships/) | frontend / rendering | any | — | verified | 2026-10-15 | — | 0 |
 | [the-probe-lies](the-probe-lies/) | meta / reasoning | any | — | verified | 2026-10-16 | — | 0 |
+| [mvcreate](mvcreate/) | video / production | any | ffmpeg | draft | — | `scripts/audit_frames.py` | 1 |
 
 <!-- SKILLS:END -->
 

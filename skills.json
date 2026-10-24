@@ -68,6 +68,7 @@
         "precompute-the-rest-state"
       ],
       "referenced_by": [
+        "mvcreate",
         "precompute-the-rest-state",
         "the-halo-remembers-the-cursor",
         "the-shell-is-what-ships"
@@ -79,6 +80,45 @@
       "body_lines": 65,
       "scripts": [],
       "evidence_count": 0
+    },
+    {
+      "name": "mvcreate",
+      "path": "mvcreate",
+      "domain": "video",
+      "cluster": "production",
+      "kind": "authoring",
+      "role": "skill",
+      "platform": [
+        "any"
+      ],
+      "requires": [
+        "ffmpeg"
+      ],
+      "maturity": "draft",
+      "verified_on": null,
+      "triggers": [
+        "make an MV shot",
+        "pixel art video",
+        "old TV CRT look",
+        "picture book animation",
+        "low-poly 3D scene",
+        "code-drawn looping clip"
+      ],
+      "related": [
+        "measure-the-rendering-path",
+        "render-it-or-you-are-guessing",
+        "the-shell-is-what-ships"
+      ],
+      "referenced_by": [],
+      "evidence_refs": [
+        "mvcreate/EVIDENCE.md"
+      ],
+      "description": "Use when a song, a mood or a script has to become a short, phone-first video drawn entirely in code — pixel art, CRT, hand-drawn picture book or low-poly 3D — and it must read as deliberate rather than generated. Symptoms: \"make an MV shot\", \"the style is right but the character is mush on a phone\", \"it looks cheap / not really pixel / not really 3D\", \"every render comes out different\", \"the loop jumps at the seam\".",
+      "body_lines": 152,
+      "scripts": [
+        "scripts/audit_frames.py"
+      ],
+      "evidence_count": 1
     },
     {
       "name": "one-press-one-action",
@@ -174,6 +214,7 @@
       ],
       "referenced_by": [
         "grep-cannot-read-a-compressed-store",
+        "mvcreate",
         "the-entry-bundle-lies",
         "the-probe-lies",
         "the-shell-is-what-ships"
@@ -330,6 +371,7 @@
         "measure-the-rendering-path"
       ],
       "referenced_by": [
+        "mvcreate",
         "precompute-the-rest-state"
       ],
       "evidence_refs": [
