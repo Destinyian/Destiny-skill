@@ -158,6 +158,7 @@ frontend    interaction      authoring    one-press-one-action
                              authoring    the-shell-is-what-ships
                              authoring    measure-the-rendering-path
                              authoring    precompute-the-rest-state
+            motion           effect       the-halo-remembers-the-cursor
 meta        reasoning        reasoning    the-probe-lies
 ```
 
@@ -265,7 +266,7 @@ The **kind** says how the card is graded, and there is exactly one per card:
 | **Instrument** | a URL or a live process | observations the other kinds consume | `render-it-or-you-are-guessing` (ships `render-page.js`) |
 | **Authoring** | a design intent | code with measured defaults and their counter-examples | `the-shell-is-what-ships`, `measure-the-rendering-path`, `one-press-one-action`, `precompute-the-rest-state` |
 | **Reasoning** | a negative or misleading result | the rule that replaces it | `the-probe-lies` |
-| **Effect** | an observed motion on someone else's page | a reproducible timeline, its parameters, and the naive version it replaces | none yet — the grading is §14 |
+| **Effect** | an observed motion on someone else's page | a reproducible timeline, its parameters, and the naive version it replaces | `the-halo-remembers-the-cursor` |
 
 **Extraction skills are graded on their output, not on their knowledge.** Every entry carries
 evidence (a file:line or an observed event), parameters tagged `measured | estimated`, and a

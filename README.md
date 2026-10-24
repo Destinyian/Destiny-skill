@@ -44,9 +44,9 @@ catalogue is organised by what starts the motion, because that is how you know w
 | a page that arrives instead of appearing | `entrance` | `frontend / motion` |
 | particles, breathing glow, something alive while idle | `ambient` | `frontend / motion` |
 
-There is no motion card yet, and that is deliberate: the first one comes from a real page, not from
-a tutorial. Every motion card is read in the same order — `See it`, `Timeline`, `Parameters`,
-`Cheap version`, `Degrade` — and the exact requirements live in
+The first motion card is [the-halo-remembers-the-cursor](the-halo-remembers-the-cursor/), taken from
+a real page rather than a tutorial. Every motion card is read in the same order — `See it`,
+`Timeline`, `Parameters`, `Cheap version`, `Degrade` — and the exact requirements live in
 [CONVENTIONS.md](CONVENTIONS.md) §14.
 
 Scaffold: [templates/effect/SKILL.md](templates/effect/SKILL.md); `python tools/skillkit.py new
@@ -108,6 +108,7 @@ site?"), so an agent can match it without reading the body. Two skills name a si
 | [render-it-or-you-are-guessing](render-it-or-you-are-guessing/) | "can you see this site?", JS-only SPA, a gate that needs a click, or verifying a change without a browser | `curl` returns a shell, `--dump-dom` cannot click, `--screenshot` fires too early — drive the DevTools Protocol from Node 22 built-ins and wait for a readiness signal |
 | [the-entry-bundle-lies](the-entry-bundle-lies/) | "what is this site built with?", "why is this page heavy?", before optimising or copying it | the entry bundle is the least informative file: a 222 KB entry had no `canvas` while the renderer sat in a 552 KB lazy chunk. Extract to implementable blocks, never to prose |
 | [grep-cannot-read-a-compressed-store](grep-cannot-read-a-compressed-store/) | you need a userscript's real source, its settings, or recovery after a profile move | the store is Snappy-compressed LevelDB with double-encoded JSON — text tools see nothing. A 41-line decoder plus a table walk reads both `.ldb` and `.log` |
+| [the-halo-remembers-the-cursor](the-halo-remembers-the-cursor/) | a cursor effect feels dead — a glow that sits on the pointer like a flashlight, or a page that only wakes when you move | the halo is a velocity field with memory: after a fast swipe the frame still holds the whole path, then it decays in about 0.6 s. The CSS glow is the cheap version, shipped as the control |
 
 ## Notes
 
@@ -129,6 +130,7 @@ Generated from `skills.json`. Do not edit by hand — run `python tools/skillkit
 | [grep-cannot-read-a-compressed-store](grep-cannot-read-a-compressed-store/) | browser / data-extraction | windows, macos, linux | python>=3.10 | verified | 2026-10-15 | `scripts/extract_tampermonkey_store.py` | 0 |
 | [render-it-or-you-are-guessing](render-it-or-you-are-guessing/) | browser / observation | any | node>=22 | verified | 2026-10-15 | `scripts/render-page.js` | 0 |
 | [one-press-one-action](one-press-one-action/) | frontend / interaction | any | — | verified | 2026-10-15 | — | 0 |
+| [the-halo-remembers-the-cursor](the-halo-remembers-the-cursor/) | frontend / motion | any | webgl2 | draft | — | — | 1 |
 | [measure-the-rendering-path](measure-the-rendering-path/) | frontend / rendering | any | — | verified | 2026-10-15 | — | 0 |
 | [precompute-the-rest-state](precompute-the-rest-state/) | frontend / rendering | any | — | verified | 2026-10-15 | — | 1 |
 | [the-entry-bundle-lies](the-entry-bundle-lies/) | frontend / rendering | any | python>=3.10 | verified | 2026-10-15 | `scripts/audit_page_signals.py` | 0 |

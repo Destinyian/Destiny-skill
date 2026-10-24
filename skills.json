@@ -69,6 +69,7 @@
       ],
       "referenced_by": [
         "precompute-the-rest-state",
+        "the-halo-remembers-the-cursor",
         "the-shell-is-what-ships"
       ],
       "evidence_refs": [
@@ -226,6 +227,44 @@
         "scripts/audit_page_signals.py"
       ],
       "evidence_count": 0
+    },
+    {
+      "name": "the-halo-remembers-the-cursor",
+      "path": "the-halo-remembers-the-cursor",
+      "domain": "frontend",
+      "cluster": "motion",
+      "kind": "effect",
+      "role": "skill",
+      "platform": [
+        "any"
+      ],
+      "requires": [
+        "webgl2"
+      ],
+      "maturity": "draft",
+      "verified_on": null,
+      "triggers": [
+        "cursor glow looks like a flashlight",
+        "the halo feels glued to the pointer",
+        "want an ink or smoke trail behind the cursor",
+        "page feels dead until the mouse moves"
+      ],
+      "related": [
+        "measure-the-rendering-path"
+      ],
+      "referenced_by": [],
+      "evidence_refs": [
+        "the-halo-remembers-the-cursor/EVIDENCE.md"
+      ],
+      "description": "Use when a cursor effect feels dead or glued — a glow that sits on the pointer like a flashlight, a page that only wakes when you move — and you want an ink halo that blooms behind the cursor, keeps the shape of the path for a moment, then fades on its own. The idea: the halo is a velocity field with memory, not a sprite that follows the pointer.",
+      "body_lines": 200,
+      "scripts": [],
+      "evidence_count": 1,
+      "trigger_family": "pointer",
+      "surfaces": [
+        "hover",
+        "idle"
+      ]
     },
     {
       "name": "the-probe-lies",
