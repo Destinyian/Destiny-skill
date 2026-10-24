@@ -66,7 +66,10 @@ DESCRIPTION_OPENING_RE = re.compile(r"^use (?:when|before|after|while|if|during)
 # The seven fields of an idea card (CONVENTIONS.md section 11). A card missing any of them is not
 # finished, so the check is an error rather than a warning: an unfinished card is what turns the
 # catalogue back into a pile of notes.
-IDEA_KINDS = {"reasoning", "extraction", "instrument", "authoring"}
+# Five kinds now. `effect` exists because a motion is graded differently from an authoring rule: it
+# is judged by whether someone else can reproduce it on their machine, and by what it degenerates
+# into when it is done cheaply (CONVENTIONS.md section 14).
+IDEA_KINDS = {"reasoning", "extraction", "instrument", "authoring", "effect"}
 
 IDEA_FIELDS = [
     ("the claim", r"\*\*The idea\.\*\*"),
@@ -77,6 +80,36 @@ IDEA_FIELDS = [
     ("evidence", r"(?m)^## Evidence"),
     ("verify", r"(?m)^## Verify"),
 ]
+
+# An effect card carries one *class* of motion, and a class is bounded by what starts it. Every
+# variant named in the card must be triggered by the same family; a card that mixes families is a
+# manual again, which is what the 2026-10-16 pruning removed (CONVENTIONS.md section 14).
+TRIGGER_FAMILIES = {"pointer", "scroll", "state", "entrance", "ambient"}
+
+# The eight places a page can respond to a person. They are the unit of page-level judgement, not a
+# score: `cluster` reports which ones nothing in the library covers.
+INTENT_SURFACES = {"hover", "press", "drag", "scroll", "focus-key", "route-view", "load", "idle"}
+
+# Sections an effect card is expected to carry. Missing one is a warning, not an error: a draft is
+# allowed to be incomplete, and a strict gate here would only teach people to skip the checker.
+EFFECT_SECTIONS = [
+    ("Trigger", r"(?m)^## Trigger\b"),
+    ("See it", r"(?m)^## See it\b"),
+    ("Timeline", r"(?m)^## Timeline\b"),
+    ("Parameters", r"(?m)^## Parameters\b"),
+    ("Budget", r"(?m)^## Budget\b"),
+    ("Degrade", r"(?m)^## Degrade\b"),
+    ("Cheap version", r"(?m)^## Cheap version\b"),
+    ("Variants", r"(?m)^## Variants\b"),
+]
+
+# A description written only in technique language cannot be found by someone who wants a page to
+# feel alive. Soft by design: these words are a discovery aid, not a law.
+INTENT_WORDS = {
+    "feel", "feels", "feeling", "dead", "flat", "static", "cheap", "premium", "alive", "lively",
+    "lifeless", "physical", "tactile", "juicy", "crisp", "smooth", "polished", "responsive",
+}
+CJK_INTENT_WORDS = ("素", "平", "死", "廉价", "没质感", "呆板", "生硬", "高级")
 
 # A script's own usage text is where the "renamed but not everywhere" class of bug lives, so the
 # header (module docstring) and every `python x.py` / `node x.js` invocation are checked.
@@ -166,6 +199,16 @@ def count_evidence(path: Path) -> int:
 
 def strip_fenced(raw: str) -> str:
     return FENCED_BLOCK_RE.sub(" ", raw)
+
+
+def section_text(raw: str, heading: str) -> str:
+    """Body of a `## heading` section, up to the next `## ` or EOF (empty string when absent)."""
+    m = re.search(r"(?m)^##\s+" + re.escape(heading) + r"\s*$", raw)
+    if not m:
+        return ""
+    rest = raw[m.end():]
+    nxt = re.search(r"(?m)^##\s+", rest)
+    return rest[: nxt.start()] if nxt else rest
 
 
 def referenced_paths(raw: str) -> set[str]:
@@ -342,6 +385,50 @@ def validate(skills: list[Skill], index: dict) -> list[tuple[str, str, str, str]
         elif kind == "instrument" and not s.scripts:
             err("E18", s.dir_name, "kind 'instrument' but the card ships no script")
 
+        # E19 an effect card must route: one declared trigger family and the intent surfaces it covers.
+        # Only these two are errors - everything else about an effect card is a warning, because the
+        # point of the rule is a usable catalogue, not a wall a draft cannot get over.
+        if kind == "effect":
+            family = entry.get("trigger_family")
+            if family not in TRIGGER_FAMILIES:
+                err("E19", s.dir_name, f"effect card needs trigger_family in {sorted(TRIGGER_FAMILIES)} (skills.json)")
+            surfaces = entry.get("surfaces") or []
+            if not surfaces:
+                err("E19", s.dir_name, "effect card needs a non-empty 'surfaces' list (section 14)")
+            for bad in [x for x in surfaces if x not in INTENT_SURFACES]:
+                err("E19", s.dir_name, f"unknown intent surface '{bad}' (allowed: {sorted(INTENT_SURFACES)})")
+            for found in sorted(set(re.findall(r"(?i)\bfamily:\s*`?([a-z][a-z-]*)`?", s.raw))):
+                if family and found != family:
+                    err("E19", s.dir_name, f"card mixes trigger families: '{found}' != '{family}' - a class is one family (section 14)")
+            for name, pattern in EFFECT_SECTIONS:
+                if not re.search(pattern, s.raw):
+                    warn("W10", s.dir_name, f"effect card has no '## {name}' section (section 14)")
+            timeline = section_text(s.raw, "Timeline")
+            if timeline and not (re.search(r"\bduration\b", timeline, re.I) and re.search(r"\beasing\b", timeline, re.I)):
+                warn("W10", s.dir_name, "## Timeline should be a table with duration and easing columns")
+            budget = section_text(s.raw, "Budget")
+            if budget and not re.search(r"\d+(?:\.\d+)?\s*(?:ms|fps)\b", budget, re.I):
+                warn("W10", s.dir_name, "## Budget has no measured cost (want e.g. '8 ms/frame')")
+            degrade = section_text(s.raw, "Degrade")
+            if degrade and "prefers-reduced-motion" not in degrade:
+                warn("W10", s.dir_name, "## Degrade must name prefers-reduced-motion")
+            cheap = section_text(s.raw, "Cheap version")
+            if cheap and "```" not in cheap:
+                warn("W10", s.dir_name, "## Cheap version must show the naive implementation in a code block")
+            variants = section_text(s.raw, "Variants")
+            if variants:
+                rows = [
+                    ln for ln in variants.splitlines()
+                    if ln.strip().startswith("|") and not re.fullmatch(r"\|[\s:|-]+\|", ln.strip())
+                ]
+                if len(rows) - 1 < 2:
+                    warn("W09", s.dir_name, "## Variants lists fewer than two variants - this is an effect, not a class (section 14)")
+            low = s.description.lower()
+            has_intent = any(re.search(r"\b" + re.escape(w) + r"\b", low) for w in INTENT_WORDS)
+            has_intent = has_intent or any(w in s.description for w in CJK_INTENT_WORDS)
+            if not has_intent:
+                warn("W08", s.dir_name, "effect description has no intent word (feels dead / too flat / cheap) - it will not be recalled by someone who wants a page to feel alive")
+
         # W03 zombie: no evidence of its own and no journal reference either
         if s.evidence_count == 0 and not entry.get("evidence_refs"):
             warn("W03", s.dir_name, "no evidence entries and no evidence_refs - is this skill alive?")
@@ -450,6 +537,12 @@ def computed_entry(s: Skill, previous: dict | None) -> dict:
         "scripts": [f"scripts/{x}" for x in s.scripts],
         "evidence_count": s.evidence_count,
     }
+    # Effect-only fields are authored, not derived: omit them on cards that do not use them, so the
+    # index records differences instead of sixteen nulls and empty lists.
+    if prev.get("trigger_family"):
+        entry["trigger_family"] = prev["trigger_family"]
+    if prev.get("surfaces"):
+        entry["surfaces"] = prev["surfaces"]
     return entry
 
 
@@ -548,6 +641,20 @@ def report() -> int:
         else:
             print(f"  {domain}/{cluster}: {count}")
 
+    declared = [sk for sk in skills if (idx.get(sk.name) or {}).get("surfaces")]
+    if not declared:
+        print("\nintent-surface coverage: no card declares 'surfaces' yet (effect cards do - section 14).")
+    else:
+        print("\nintent-surface coverage (a page-level view; reported, never gated):")
+        surface_owners: dict[str, list[str]] = {surface: [] for surface in sorted(INTENT_SURFACES)}
+        for sk in declared:
+            for surface in (idx.get(sk.name) or {}).get("surfaces") or []:
+                if surface in surface_owners:
+                    surface_owners[surface].append(sk.name)
+        for surface, owners in surface_owners.items():
+            label = ", ".join(owners) if owners else "<-- nothing in the library responds here"
+            print(f"  {surface:<12} {label}")
+
     print("\npossible overlaps (description token Jaccard >= %.2f):" % JACCARD_WARN)
     found = False
     for i, a in enumerate(skills):
@@ -592,15 +699,22 @@ def report() -> int:
 
 
 # --- scaffolding -------------------------------------------------------------
-def new_skill(name: str) -> int:
+def new_skill(name: str, kind: str = "idea") -> int:
     if not NAME_RE.match(name):
         print(f"error: '{name}' is not kebab-case")
+        return 2
+    if kind not in {"idea", "effect"}:
+        print(f"error: unknown scaffold '{kind}' (expected idea | effect)")
         return 2
     target = ROOT / name
     if target.exists():
         print(f"error: {name} already exists")
         return 2
-    template = (ROOT / "templates" / "idea" / SKILL_FILE).read_text(encoding="utf-8")
+    template_path = ROOT / "templates" / kind / SKILL_FILE
+    if not template_path.is_file():
+        print(f"error: missing template templates/{kind}/{SKILL_FILE}")
+        return 2
+    template = template_path.read_text(encoding="utf-8")
     (target / "scripts").mkdir(parents=True)
     body = template.replace("idea-name-as-an-assertion", name).replace("skill-name", name)
     (target / SKILL_FILE).write_text(body, encoding="utf-8")
@@ -609,8 +723,10 @@ def new_skill(name: str) -> int:
         "See EVOLUTION.md for the entry format.\n",
         encoding="utf-8",
     )
-    print(f"created {name}/ (SKILL.md, EVIDENCE.md, scripts/)")
-    print("next: fill the description, then run  python tools/skillkit.py index --write")
+    print(f"created {name}/ from templates/{kind} (SKILL.md, EVIDENCE.md, scripts/)")
+    if kind == "effect":
+        print("next: set kind=effect and trigger_family in skills.json, then fill the sections")
+    print("then: python tools/skillkit.py index --write")
     return 0
 
 
@@ -667,9 +783,16 @@ def main(argv: list[str]) -> int:
         return report()
     if cmd == "new":
         if not rest:
-            print("usage: skillkit.py new <kebab-case-name>")
+            print("usage: skillkit.py new <kebab-case-name> [--kind idea|effect]")
             return 2
-        return new_skill(rest[0])
+        kind = "idea"
+        if "--kind" in rest:
+            i = rest.index("--kind")
+            if i + 1 >= len(rest):
+                print("error: --kind needs a value (idea | effect)")
+                return 2
+            kind = rest[i + 1]
+        return new_skill(rest[0], kind)
     if cmd == "evidence":
         if not rest:
             print("usage: skillkit.py evidence <skill> [scenario]")

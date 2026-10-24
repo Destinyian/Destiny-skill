@@ -26,9 +26,32 @@ taught into the next project, so a skill is graded on whether someone can *apply
 | evidence | measurements with the environment that produced them |
 | verify | the command that passes here **and fails** when the old path is switched back on |
 
-Scaffold: [templates/idea/SKILL.md](templates/idea/SKILL.md). The rule and its enforcement live in
-[CONVENTIONS.md](CONVENTIONS.md) §11; a skill that carries no idea — a narrative, a topic summary —
-is a journal entry, however true it is.
+Scaffold: [templates/idea/SKILL.md](templates/idea/SKILL.md) for an idea card,
+[templates/effect/SKILL.md](templates/effect/SKILL.md) for a motion card. The rule and its enforcement
+live in [CONVENTIONS.md](CONVENTIONS.md) §11; a skill that carries no idea — a narrative, a topic
+summary — is a journal entry, however true it is.
+
+## Start here if your pages come out static
+
+A motion card is not a trick, it is a **class**: one claim, one trigger family, several variants. The
+catalogue is organised by what starts the motion, because that is how you know where to look:
+
+| You want | family | Cluster |
+|---|---|---|
+| hover, press, drag, a cursor that follows | `pointer` | `frontend / motion` |
+| parallax, pinning, reveal on scroll | `scroll` | `frontend / motion` |
+| open/close, route change, theme switch | `state` | `frontend / motion` |
+| a page that arrives instead of appearing | `entrance` | `frontend / motion` |
+| particles, breathing glow, something alive while idle | `ambient` | `frontend / motion` |
+
+There is no motion card yet, and that is deliberate: the first one comes from a real page, not from
+a tutorial. Every motion card is read in the same order — `See it`, `Timeline`, `Parameters`,
+`Cheap version`, `Degrade` — and the exact requirements live in
+[CONVENTIONS.md](CONVENTIONS.md) §14.
+
+Scaffold: [templates/effect/SKILL.md](templates/effect/SKILL.md); `python tools/skillkit.py new
+<name> --kind effect`. The rules are [CONVENTIONS.md](CONVENTIONS.md) §13 (how a page becomes a card)
+and §14 (what a motion card must carry).
 
 ## Who this is for
 
@@ -85,6 +108,7 @@ site?"), so an agent can match it without reading the body. Two skills name a si
 | [render-it-or-you-are-guessing](render-it-or-you-are-guessing/) | "can you see this site?", JS-only SPA, a gate that needs a click, or verifying a change without a browser | `curl` returns a shell, `--dump-dom` cannot click, `--screenshot` fires too early — drive the DevTools Protocol from Node 22 built-ins and wait for a readiness signal |
 | [the-entry-bundle-lies](the-entry-bundle-lies/) | "what is this site built with?", "why is this page heavy?", before optimising or copying it | the entry bundle is the least informative file: a 222 KB entry had no `canvas` while the renderer sat in a 552 KB lazy chunk. Extract to implementable blocks, never to prose |
 | [grep-cannot-read-a-compressed-store](grep-cannot-read-a-compressed-store/) | you need a userscript's real source, its settings, or recovery after a profile move | the store is Snappy-compressed LevelDB with double-encoded JSON — text tools see nothing. A 41-line decoder plus a table walk reads both `.ldb` and `.log` |
+
 ## Notes
 
 True knowledge that does **not** earn a place in the skill catalogue: it costs context in every
@@ -126,6 +150,10 @@ Generated from `skills.json`. Do not edit by hand — run `python tools/skillkit
    may contain tokens carry an explicit warning.
 6. **Transferable beats personal.** A skill that only works on the maintainer's machine belongs in
    `notes/`, not in the catalogue.
+7. **Show the cheap version.** A motion card ships the naive implementation it replaces, so "this
+   looks amateur" becomes a control experiment instead of a matter of taste.
+8. **One class per card.** A motion card is bounded by its trigger family: the same claim and the
+   same kind of input may have several variants, a second input family is a second card.
 
 ## Working on this repo
 
@@ -139,7 +167,7 @@ Generated from `skills.json`. Do not edit by hand — run `python tools/skillkit
 ```bash
 python tools/skillkit.py check      # validate the whole library (exit 1 on any error)
 python tools/skillkit.py cluster    # domains, clusters, overlap, maintenance report
-python tools/skillkit.py new <name> # scaffold a new skill
+python tools/skillkit.py new <name> [--kind effect]  # scaffold a card
 ```
 
 Rule of thumb: **one commit touches one skill**, and no rewrite without evidence.

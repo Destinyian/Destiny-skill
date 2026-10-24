@@ -9,6 +9,9 @@ script, treat it as a guideline, not a law.
 - **The unit is one idea.** One directory = one idea from one real project, with seven fields:
   claim, provenance, recall triggers, how to apply, boundaries, evidence, verify. Missing any → the
   card is unfinished (E17).
+- **An effect is one class, not one trick.** A motion card carries a group of motions that share one
+  claim and one trigger family (`pointer` / `scroll` / `state` / `entrance` / `ambient`) — that is
+  the unit a person searches for. A different family is a different card (§14).
 - **Names.** Directory = frontmatter `name` = kebab-case claim. Scripts are `snake_case.py` or
   `kebab-case.js`, verb first (E01/E02/E06).
 - **Frontmatter is two fields.** `name` and `description`; the description opens with `Use when`,
@@ -33,7 +36,7 @@ CONVENTIONS.md       this file
 EVOLUTION.md         the evidence -> rewrite -> verify loop
 LICENSE              MIT
 skills.json          machine-readable index: domain, cluster, kind, triggers, maturity, evidence
-templates/idea/      scaffold used by `skillkit.py new`
+templates/<kind>/    scaffold used by `skillkit.py new --kind <kind>` (idea, effect)
 tools/skillkit.py    the only tool: check / index / cluster / new / evidence
 journal/             session write-ups, one file per session: YYYY-MM-DD-<topic>.md
 notes/               knowledge that is true but out of mission (not a card, not installed)
@@ -49,7 +52,7 @@ expressed in `skills.json` (`domain` / `cluster`), never by directory nesting.
 ```
 <skill-name>/
   SKILL.md        required - frontmatter + body
-  EVIDENCE.md     append-only log of real sessions that used (or should have used) this skill
+  EVIDENCE.md     append-only log; required once the card claims `field-tested`, optional before
   CHANGELOG.md    optional - only when a claim was changed and future readers need the history
   scripts/        executables (verb-first names, zero third-party dependencies)
   references/     heavy reference material (>100 lines) kept out of SKILL.md
@@ -84,9 +87,12 @@ description: Use when ... # <= 500 chars, third person, triggering conditions ON
 ```
 
 * `description` **must open with** `Use when` — or `Use before` / `Use after` / `Use while` when the
-  trigger is temporal. All eight cards currently open with `Use when`. It describes
+  trigger is temporal. Every card currently opens with `Use when`. It describes
   **when to load the skill**, never how it works. A description that summarises the workflow becomes
   a shortcut the agent follows instead of reading the body.
+* For an `effect` card the description must also carry **intent language** — "feels dead", "too
+  flat", "cheap", "no feedback" — because the person looking for it says what they want to feel,
+  not which event to listen to (W08 warns when it is missing).
 * Keywords first: exact error strings (`0xE0000008`, `SEC_E_NO_CREDENTIALS`), symptoms
   ("Aw, Snap!", "flaky", "not available for this group"), tool names.
 * Whole frontmatter ≤ 1024 chars (E03).
@@ -157,7 +163,9 @@ meta        reasoning        reasoning    the-probe-lies
 
 `kind` is a field in `skills.json`, not a note: E18 rejects an unknown kind and rejects an
 `instrument` that ships no script. A card has exactly one kind — the one that decides how it is
-graded.
+graded. The five kinds are `reasoning`, `extraction`, `instrument`, `authoring` and `effect`; an
+`effect` card additionally declares one `trigger_family` and the `surfaces` it covers (§14), because
+those two fields are what a reader searches by.
 
 * **Cluster of 3–7 skills → add a hub skill** (a router): its body is a decision table plus links,
   under 60 lines, and its `description` is written to win when the user has not yet narrowed down
@@ -180,7 +188,7 @@ graded.
 
 ## 9. Definition of done for a new skill
 
-1. `python tools/skillkit.py new <name>` — scaffold.
+1. `python tools/skillkit.py new <name> [--kind effect]` — scaffold.
 2. Write the description from **observed symptoms**, not from intention.
 3. Write the body with evidence for every non-obvious claim.
 4. `python tools/skillkit.py index --write` — register it.
@@ -208,8 +216,9 @@ graded.
 | E12 | error | no trigger phrase is claimed by two skills |
 | E13 | error | a script must not tell the reader to run a file that exists nowhere — `python old_name.py` after a rename is the canonical case |
 | E17 | error | an idea card carries all seven fields (claim, provenance, recall triggers, how to apply, boundaries, evidence, verify) — a card missing one is unfinished |
-| E18 | error | `kind` is one of `reasoning` / `extraction` / `instrument` / `authoring`, and an `instrument` ships a script |
-| W01–W07 | warn | CJK in a body, description token overlap, body near 500 lines, fewer than 3 triggers, first-person description, cross-skill file reference, no evidence at all |
+| E18 | error | `kind` is one of `reasoning` / `extraction` / `instrument` / `authoring` / `effect`, and an `instrument` ships a script |
+| E19 | error | an `effect` card declares a valid `trigger_family`, a non-empty `surfaces` list, and mixes no second family |
+| W01–W10 | warn | CJK in a body, description token overlap, body near 500 lines, fewer than 3 triggers, first-person description, cross-skill file reference, no evidence at all, no intent word in an effect description, a class of one variant, a missing effect section |
 
 `referenced_by` is **generated** (the inverse of `related`); `index --write` maintains it, so never
 hand-edit it.
@@ -256,6 +265,7 @@ The **kind** says how the card is graded, and there is exactly one per card:
 | **Instrument** | a URL or a live process | observations the other kinds consume | `render-it-or-you-are-guessing` (ships `render-page.js`) |
 | **Authoring** | a design intent | code with measured defaults and their counter-examples | `the-shell-is-what-ships`, `measure-the-rendering-path`, `one-press-one-action`, `precompute-the-rest-state` |
 | **Reasoning** | a negative or misleading result | the rule that replaces it | `the-probe-lies` |
+| **Effect** | an observed motion on someone else's page | a reproducible timeline, its parameters, and the naive version it replaces | none yet — the grading is §14 |
 
 **Extraction skills are graded on their output, not on their knowledge.** Every entry carries
 evidence (a file:line or an observed event), parameters tagged `measured | estimated`, and a
@@ -265,7 +275,7 @@ the analysis is correct: nobody can write code from it.
 An **instrument** is judged by whether its output is reproducible on the reader's machine — that is
 why zero dependencies is a hard rule.
 
-A skill that is none of those four is a **diagnostic**: it explains a failure instead of producing
+A skill that is none of those five is a **diagnostic**: it explains a failure instead of producing
 something to build from. Diagnostics go to `notes/` when the knowledge is still needed and cannot be
 re-derived, and are deleted when the incident is already recorded as an instance of a reasoning card
 (§12). They do not stay in the catalogue: they cost context in every session while producing nothing
@@ -323,3 +333,87 @@ Removed in the same pass, and where their content went:
 
 **Recovery.** Deleted content is never lost: `git log --diff-filter=D --name-only` finds it, and
 `git show <sha>^:<path>` prints it. The re-scoring commit is the one that introduced this section.
+
+## 13. From someone else's page to a card
+
+The intake path for an effect: a URL, a component, or a recorded interaction arrives, and one card
+leaves. This is **not** a process skill — it is the explanation of where the fields in §14 come from.
+The gate is the fields, not the process.
+
+1. **Capture.** Write down the source (URL, repo path, component name), the exact input you produced
+   (pointer path, scroll position, click count), and one piece of replayable evidence. An effect with
+   no traceable source is a guess.
+2. **Isolate.** One trigger family, one claim. If the page does three things, that is three cards.
+   The rejected two are not lost — they are the next two cards.
+3. **Parameterize.** Read durations, easing and stagger from the computed styles, the JS constants
+   or the performance timeline. Mark each value `measured` or `estimated`. An estimate must never
+   wear the clothes of a measurement.
+4. **Reconstruct.** Write a zero-dependency skeleton that runs on its own. If it needs a build step,
+   the reader cannot try it, and an effect nobody tries educates nobody.
+5. **Falsify.** Write the **Cheap version** — the naive implementation the effect replaces. It is the
+   control switch: Verify must pass on the card and fail on the cheap version.
+6. **Degrade.** Name the `prefers-reduced-motion` path and a low-end path, and say what is lost. An
+   effect that degrades to nothing is decoration; one that degrades to a quieter version is
+   behaviour.
+7. **Register.** `index --write` → `check` → `cluster` → one `feat(<card>)` commit whose `Verified:`
+   names the source and the toggle experiment.
+
+## 14. Effect cards: one class, one family
+
+A person looking for an effect does not search for an event name. They search for what they want the
+page to *feel* like — "hover has no feedback", "the entrance is just a fade", "it feels flat". The
+catalogue has to be built around that search, which is why an effect card is a **class**, not a
+trick.
+
+**A class is bounded by its trigger family.** One card, one family, any number of variants that
+share the claim:
+
+| family | starts on | typical |
+|---|---|---|
+| `pointer` | pointer position, press, drag, proximity | hover, magnetic cursor, tilt, drag inertia |
+| `scroll` | scroll progress, entering the viewport | parallax, pinning, scroll-driven timeline |
+| `state` | an explicit state change | open/close, route or tab change, theme switch |
+| `entrance` | first presentation | page-load choreography, stagger reveals |
+| `ambient` | time passing by itself | particles, breathing glow, marquee, shaders |
+
+A variant that needs a different family is a different card. This is what keeps "one class per card"
+from turning back into the four-idea manual §12 removed.
+
+**Intent surfaces** answer a page-level question — where a page is allowed to respond:
+
+`hover` · `press` · `drag` · `scroll` · `focus-key` · `route-view` · `load` · `idle`
+
+An effect card declares the surfaces it covers in `skills.json`. `skillkit.py cluster` prints a
+coverage matrix of the eight surfaces and names the ones nothing in the library responds to. That is
+**reported, never gated** — the same reason body overlap is reported (a threshold here would only
+teach people to ignore the checker). It is the honest definition of "this page is static": not that
+it lacks effects, but that N of these surfaces produce no response.
+
+**Required shape.** `templates/effect/` scaffolds it; `skillkit.py new <name> --kind effect` uses it.
+E19 enforces only the two fields that make routing work (`trigger_family`, `surfaces`) and the
+single-family rule; everything else is a warning, because the goal is a catalogue a frontend
+developer wants to use, not a wall a draft cannot get over.
+
+| Section | Answers | Level |
+|---|---|---|
+| `## See it` | what to look at before any code — a recording, a live URL, or a paste-able demo | W10 |
+| `## Trigger` | `family:` and the exact input that starts and ends the motion | W10 |
+| `## How to apply` | the rules with the constants, as in every other card | E17 |
+| `## Timeline` | phase table with duration, easing, stagger | W10 |
+| `## Parameters` | pastable constants, each `measured` or `estimated` | W10 |
+| `## Budget` | frame cost and the environment that measured it | W10 |
+| `## Degrade` | `prefers-reduced-motion` and one low-end path, and what is lost | W10 |
+| `## Cheap version` | the naive implementation, in a code block | W10 |
+| `## Variants` | two or more manifestations of the same claim and family | W09 if fewer |
+
+**The Cheap version is the most important section.** It turns "this looks amateur" from a matter of
+taste into a control experiment: if reverting to it does not make the check fail, the card has no
+claim. This is the same rule as the counter/control switch in [EVOLUTION.md](EVOLUTION.md) and the
+same reason `fix`/`feat` commits carry `Verified:`.
+
+**A hub comes after three cards, not before.** The `motion` cluster gets a router only when three
+effect cards exist to route between; a hub declared on an unobserved scenario is exactly the
+structure §11 tells you to delete and rebuild later.
+
+**Naming.** The directory is the claim, not the technique's nickname: `pointer-feedback-is-one-field`,
+not `magnetic-cursor`. The reader should be able to disagree with the name.

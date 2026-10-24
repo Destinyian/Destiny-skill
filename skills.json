@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generated_by": "tools/skillkit.py index --write",
-  "notes": "Authored fields: domain, cluster, maturity, verified_on, triggers, related. Generated fields (description, body_lines, scripts, evidence_count) are overwritten by 'python tools/skillkit.py index --write'.",
+  "notes": "Authored fields: domain, cluster, kind, role, maturity, verified_on, triggers, related, evidence_refs, trigger_family (effect cards only), surfaces (effect cards only). Generated fields (description, body_lines, scripts, evidence_count) are overwritten by 'python tools/skillkit.py index --write'.",
   "skills": [
     {
       "name": "grep-cannot-read-a-compressed-store",
