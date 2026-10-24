@@ -116,7 +116,8 @@
       "description": "Use when a song, a mood or a script has to become a short, phone-first video drawn entirely in code — pixel art, CRT, hand-drawn picture book or low-poly 3D — and it must read as deliberate rather than generated. Symptoms: \"make an MV shot\", \"the style is right but the character is mush on a phone\", \"it looks cheap / not really pixel / not really 3D\", \"every render comes out different\", \"the loop jumps at the seam\".",
       "body_lines": 152,
       "scripts": [
-        "scripts/audit_frames.py"
+        "scripts/audit_frames.py",
+        "scripts/verify_audit_frames.py"
       ],
       "evidence_count": 1
     },

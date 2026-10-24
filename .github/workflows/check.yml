@@ -1,0 +1,49 @@
+name: check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.13"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Syntax
+        run: python -m compileall -q tools mvcreate/scripts
+
+      - name: Library gate
+        run: python tools/skillkit.py check
+
+      - name: Index and README in sync
+        run: |
+          python tools/skillkit.py index --write
+          git diff --exit-code -- README.md skills.json
+
+      - name: Audit script self-test
+        run: python mvcreate/scripts/verify_audit_frames.py
+
+      - name: Branch name
+        if: github.event_name == 'pull_request'
+        env:
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          echo "branch: $BRANCH"
+          printf '%s' "$BRANCH" | grep -Eq '^(feat|fix|docs|test|chore|refactor|revert)/[a-z0-9][a-z0-9-]*$'

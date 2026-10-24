@@ -137,7 +137,7 @@ Generated from `skills.json`. Do not edit by hand — run `python tools/skillkit
 | [the-entry-bundle-lies](the-entry-bundle-lies/) | frontend / rendering | any | python>=3.10 | verified | 2026-10-15 | `scripts/audit_page_signals.py` | 0 |
 | [the-shell-is-what-ships](the-shell-is-what-ships/) | frontend / rendering | any | — | verified | 2026-10-15 | — | 0 |
 | [the-probe-lies](the-probe-lies/) | meta / reasoning | any | — | verified | 2026-10-16 | — | 0 |
-| [mvcreate](mvcreate/) | video / production | any | ffmpeg | draft | — | `scripts/audit_frames.py` | 1 |
+| [mvcreate](mvcreate/) | video / production | any | ffmpeg | draft | — | `scripts/audit_frames.py`, `scripts/verify_audit_frames.py` | 1 |
 
 <!-- SKILLS:END -->
 
@@ -165,6 +165,8 @@ Generated from `skills.json`. Do not edit by hand — run `python tools/skillkit
 |---|---|
 | [CONVENTIONS.md](CONVENTIONS.md) | layout, naming, frontmatter, commit format, taxonomy, maturity ladder, what earns a skill |
 | [EVOLUTION.md](EVOLUTION.md) | the capture → attribute → rewrite → verify → consolidate loop |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | branches, commits, PR and release workflow, and the branch-protection settings |
+| [CHANGELOG.md](CHANGELOG.md) | SemVer releases and what changed in each |
 | [skills.json](skills.json) | machine-readable index: domain, cluster, platform, triggers, maturity, evidence count |
 | [tools/skillkit.py](tools/skillkit.py) | `check` · `index` · `cluster` · `new` · `evidence` (Python 3.10+, stdlib only) |
 
@@ -174,7 +176,9 @@ python tools/skillkit.py cluster    # domains, clusters, overlap, maintenance re
 python tools/skillkit.py new <name> [--kind effect]  # scaffold a card
 ```
 
-Rule of thumb: **one commit touches one skill**, and no rewrite without evidence.
+Rule of thumb: **one commit touches one skill**, and no rewrite without evidence. `main` takes
+changes only through a `<type>/<scope>` branch and a pull request that passes `check` — see
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Provenance
 
